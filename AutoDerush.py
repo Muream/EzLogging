@@ -1,4 +1,3 @@
-# coding=utf-8
 '''
 TODO :
 - Find a way to make ffmpeg work again
@@ -159,14 +158,5 @@ def Main():
             print "Length: " + str(length) +"s"
             print "\n"
             clip = ExportClip(videoFile, start, length, exportPath+"/%s_Clip_%s.mp4" % (name, str(currentTimer+1).zfill(2)))
-
-        break
-'''
-
-
-            
-            iteration = iteration+1
-'''
-
 
 Main()
