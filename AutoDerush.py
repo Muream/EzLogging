@@ -1,14 +1,14 @@
 '''
 TODO :
-- Find a way to make ffmpeg work again
-- find a way to keep all the audio tracks (currently only keeps one). The solution should be in the documentation of ffmpeg
 - Make sure the timers are correctly merged
 - Make sure the range of the clip is the right one
+- Do something to properly tell the user how many timers there are for the current video and which timers is currently processed
+- Use the same settings as EzLogging, maybe create another file that handles the config and call it in both scripts?
+- Make a variable containing the video format instead of blindly guessing it's mp4
 '''
 
 '''
 Dependencies
-not sure if necessary (I think I installed it to be able to use some library I don't use anymore) : https://www.microsoft.com/en-us/download/details.aspx?id=44266
 FFMPEG : https://ffmpeg.org/download.html
 
 '''
@@ -16,6 +16,8 @@ FFMPEG : https://ffmpeg.org/download.html
 import subprocess as sp
 import os
 import glob
+
+#Temporary until I have handled settings change this depending on your configuration.
 
 #Windows
 #FFMPEG_BIN = "C:/Program Files/ffmpeg-20160522-git-566be4f-win64-static/bin/ffmpeg.exe"
@@ -29,8 +31,6 @@ sourceFolder = "/home/muream/Videos/test/"
 fps = 30
 before = 20
 after = 10
-
-#def checkTimer():
 
 def ConvertTime(timer):
     '''
