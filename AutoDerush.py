@@ -16,7 +16,7 @@ FFMPEG : https://ffmpeg.org/download.html
 
 # Windows
 FFMPEG_BIN = "C:/Program Files/ffmpeg-20160522-git-566be4f-win64-static/bin/ffmpeg.exe"
-sourceFolder = "D:/Videos/__Youtube/__Rushes_to_sort/test/"
+sourceFolder = "D:/Videos/__Youtube/__Rushes_to_sort/"
 
 # Linux
 # FFMPEG_BIN = "/usr/bin/ffmpeg"
@@ -201,6 +201,6 @@ def main():
             print "Clip Duration: " + str(clipInfo['Length']) + "s"
 
             print "\n"
-            # clip = export_clip(videoFile, clipInfo['Start'], clipInfo['Length'], exportPath+"/%s_Clip_%s.mp4" % (name, str(currentTiming+1).zfill(2)))
+            clip = export_clip(videoFile, clipInfo['Start'], clipInfo['Length'], exportPath+"/%s_Clip_%s.mp4" % (name, str(currentTiming+1).zfill(2)))
 
 main()
