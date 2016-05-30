@@ -5,7 +5,8 @@ import os.path
 import glob
 from Tkinter import Tk
 r=Tk()
-
+# TODO reorganize the shit out of it
+# TODO change hotkey Libary
 class TextFile(object):
     def __init__(self):
         self.state = 0

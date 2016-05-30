@@ -1,32 +1,26 @@
+
 import subprocess as sp
 import os
 import glob
 
-'''
-TODO :
-- Make sure the timings are correctly merged
-- Make sure the range of the clip is the right one
-- Do something to properly tell the user how many timings there are for the
-current video and which timings is currently processed
-- Use the same settings as EzLogging, maybe create another file that handles
-    the config and call it in both scripts?
-- Make a variable containing the video format instead of blindly guessing it's
-    mp4
-'''
+
+
+
+# TODO Do something to properly tell the user how many timings there are for the current video and which timings is currently processed
 
 '''
 Dependencies
 FFMPEG : https://ffmpeg.org/download.html
 '''
-# Temporary until I have handled settings change this depending on your configuration.
+# TODO Use the same settings as EzLogging, maybe create another file that handles the config and call it in both scripts?
 
 # Windows
-# FFMPEG_BIN = "C:/Program Files/ffmpeg-20160522-git-566be4f-win64-static/bin/ffmpeg.exe"
-# sourceFolder = "D:/Videos/__Youtube/__Rushes_to_sort/test/"
+FFMPEG_BIN = "C:/Program Files/ffmpeg-20160522-git-566be4f-win64-static/bin/ffmpeg.exe"
+sourceFolder = "D:/Videos/__Youtube/__Rushes_to_sort/test/"
 
 # Linux
-FFMPEG_BIN = "/usr/bin/ffmpeg"
-sourceFolder = "/home/muream/Videos/test/"
+# FFMPEG_BIN = "/usr/bin/ffmpeg"
+# sourceFolder = "/home/muream/Videos/test/"
 
 # In seconds
 fps = 30
@@ -51,6 +45,7 @@ def convert_time(timing):
 
 
 def get_range(seconds, before, after):
+    # TODO Make sure the range of the clip is the right one
     '''
     Gets the range of the clip
     :param seconds: the timing in seconds
@@ -125,6 +120,7 @@ def can_merge(timings, currentIndex, after):
 '''
 
 def clip_informations(timings, currentIndex, after):
+    # TODO Make sure the timings are correctly merged
     # Compares current timing to the next one, if they are to close : Merges them and extends the range
     currentTiming = timings[currentIndex]
 
