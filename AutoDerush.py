@@ -118,10 +118,10 @@ def export_clip(filename, start, length, targetname):
                targetname]
 
     p = sp.Popen(command,
-                 shell=True,  # TODO find a replacement to this, apparently shell = True is bad
+                 #shell=True,  # TODO find a replacement to this, apparently shell = True is bad
                  stdin=sp.PIPE,
                  stdout=sp.PIPE)
-    output = p.communicate('S\nL\n')[0]
+    output = p.communicate()[0]
     print output
 
 def is_last_timing(currentIndex, timings):
