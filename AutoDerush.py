@@ -160,7 +160,7 @@ def clip_informations(timings, currentIndex, after):
     return clipInfo
 
 
-def Main():
+def main():
     # Creates the "Derush" Folder
     exportPath = sourceFolder + "Derush"
     if not os.path.exists(exportPath):
@@ -203,4 +203,4 @@ def Main():
             print "\n"
             # clip = export_clip(videoFile, clipInfo['Start'], clipInfo['Length'], exportPath+"/%s_Clip_%s.mp4" % (name, str(currentTiming+1).zfill(2)))
 
-Main()
+main()
