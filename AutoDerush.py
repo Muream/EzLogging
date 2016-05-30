@@ -4,15 +4,15 @@ import os
 import glob
 
 
-
-
-# TODO Do something to properly tell the user how many timings there are for the current video and which timings is currently processed
+# TODO Do something to properly tell the user how many timings there are
+# for the current video and which timings is currently processed
 
 '''
 Dependencies
 FFMPEG : https://ffmpeg.org/download.html
 '''
-# TODO Use the same settings as EzLogging, maybe create another file that handles the config and call it in both scripts?
+# TODO Use the same settings as EzLogging, maybe create another file that
+# handles the config and call it in both scripts?
 
 # Windows
 FFMPEG_BIN = "C:/Program Files/ffmpeg-20160522-git-566be4f-win64-static/bin/ffmpeg.exe"
@@ -37,10 +37,10 @@ def convert_time(timing):
     hour = int(timing[0:2])
     minute = int(timing[3:5])
     second = int(timing[6:8])
-    hour = hour*60*60
-    minute = minute*60
+    hour = hour * 60 * 60
+    minute = minute * 60
     second = second
-    seconds = hour+minute+second
+    seconds = hour + minute + second
     return seconds
 
 
@@ -58,7 +58,7 @@ def get_range(seconds, before, after):
         start = 0
     end = seconds + after
     length = end - start
-    clipRange = {'Start': start,'End': end,'Length': length}
+    clipRange = {'Start': start, 'End': end, 'Length': length}
     return clipRange
 
 
@@ -86,17 +86,17 @@ def export_clip(filename, start, length, targetname):
     :param end: end of the clip
     :param targetname: path to the exported file
     '''
-    command  = ["ffmpeg",
-                "-i", filename,
-                "-map", "0:0",
-                "-map", "0:1",
-                "-map", "0:2",
-                "-map", "0:3",
-                "-map", "0:4",
-                "-ss", "%0.2f" % start,
-                "-t", "%0.2f" % length,
-                "-codec", "copy",
-                targetname]
+    command = ["ffmpeg",
+               "-i", filename,
+               "-map", "0:0",
+               "-map", "0:1",
+               "-map", "0:2",
+               "-map", "0:3",
+               "-map", "0:4",
+               "-ss", "%0.2f" % start,
+               "-t", "%0.2f" % length,
+               "-codec", "copy",
+               targetname]
 
     p = sp.Popen(command,
                  stdin=sp.PIPE,
@@ -119,9 +119,11 @@ def can_merge(timings, currentIndex, after):
         lastTiming = False
 '''
 
+
 def clip_informations(timings, currentIndex, after):
     # TODO Make sure the timings are correctly merged
-    # Compares current timing to the next one, if they are to close : Merges them and extends the range
+    # Compares current timing to the next one, if they are to close : Merges
+    # them and extends the range
     currentTiming = timings[currentIndex]
 
     if currentIndex + 1 == len(timings):
@@ -137,7 +139,9 @@ def clip_informations(timings, currentIndex, after):
         difference = nextTiming - currentTiming
         if difference <= after:
             # merge the timings here
-            afterTemp = after + difference  # used to add some time to the range if timings are too close to each other
+            # used to add some time to the range if timings are too close to
+            # each other
+            afterTemp = after + difference
             del nextTiming  # remove the merged timing so that it's not processed twice
             clipRange = get_range(currentTiming, before, afterTemp)
             extended = True
@@ -151,7 +155,8 @@ def clip_informations(timings, currentIndex, after):
     start = clipRange['Start']
     end = clipRange['End']
     length = clipRange['Length']
-    clipInfo = {'Difference': difference, 'Extended': extended, 'Start': start, 'End': end, 'Length': length, 'Last Timer': lastTiming}
+    clipInfo = {'Difference': difference, 'Extended': extended,
+                'Start': start, 'End': end, 'Length': length, 'Last Timer': lastTiming}
     return clipInfo
 
 
@@ -162,21 +167,23 @@ def Main():
         os.makedirs(exportPath)
 
     # Loops through all the video files in said folder
-    videoFiles = glob.glob(sourceFolder+"*.mp4")
+    videoFiles = glob.glob(sourceFolder + "*.mp4")
     for videoFile in videoFiles:
         currentFile = videoFiles.index(videoFile) + 1
         numberOfFiles = len(videoFiles)
-        name = os.path.basename(videoFile.rsplit('.', 1)[0])  # Gets the name of the file
-        textFile = sourceFolder+name+".txt"
+        name = os.path.basename(videoFile.rsplit(
+            '.', 1)[0])  # Gets the name of the file
+        textFile = sourceFolder + name + ".txt"
         timings = get_timings(textFile)
-        #Loops through all the timings for the Video file
+        # Loops through all the timings for the Video file
         for timing in timings:
             currentIndex = timings.index(timing)
             numberOfTimings = len(timings)
             print "Processing file " + str(currentFile) + "/" + str(numberOfFiles)
-            print "Processing Timing " + str(currentIndex+1) + "/" + str(numberOfTimings)
-            print "Timing: " + str(timing) +"s"
-            # Compares current timing to the next one, if they are to close : Merges them and extends the range
+            print "Processing Timing " + str(currentIndex + 1) + "/" + str(numberOfTimings)
+            print "Timing: " + str(timing) + "s"
+            # Compares current timing to the next one, if they are to close :
+            # Merges them and extends the range
             clipInfo = clip_informations(timings, currentIndex, after)
 
             print "Seconds until next Timing : %is" % clipInfo['Difference']

@@ -4,10 +4,13 @@ import ConfigParser
 import os.path
 import glob
 from Tkinter import Tk
-r=Tk()
+r = Tk()
 # TODO reorganize the shit out of it
 # TODO change hotkey Libary
+
+
 class TextFile(object):
+
     def __init__(self):
         self.state = 0
         self.tempfile = ''
@@ -30,7 +33,9 @@ class TextFile(object):
         cfg = ConfigParser.ConfigParser()
         numberoftemp = 0
         try:
-            if not os.path.isfile('EzLogging.cfg'):  # If the config file doesn't exist, create it and ask for the user's configuration
+            # If the config file doesn't exist, create it and ask for the
+            # user's configuration
+            if not os.path.isfile('EzLogging.cfg'):
                 # Creates the config file by asking the user
                 cfgfile = open('EzLogging.cfg', 'w')
                 cfg.add_section('File')
@@ -40,9 +45,11 @@ class TextFile(object):
                 path = raw_input("Path of your recordings: ")
                 path = path.replace('\\', '/')
                 videoformat = raw_input("the format you use for your videos: ")
-                startrecord = raw_input("Shortcut used to start the recording: ")
+                startrecord = raw_input(
+                    "Shortcut used to start the recording: ")
                 stoprecord = raw_input("Shortcut used to stop the recording: ")
-                logtime = raw_input("Shortcut wanted to log the time of your recording: ")
+                logtime = raw_input(
+                    "Shortcut wanted to log the time of your recording: ")
                 cfg.set('File', 'Path', path)
                 cfg.set('File', 'Video Format', videoformat)
                 cfg.set('Hotkeys', 'Start record', startrecord)
@@ -82,22 +89,23 @@ class TextFile(object):
 
         for f in os.listdir(self.path):
             if "Temp" in f:
-                numberoftemp = numberoftemp+1
+                numberoftemp = numberoftemp + 1
         if numberoftemp == 1:
-            print "Careful! you have %i temp file that have not been deleted, it might contain some sweet timings for one of your videos! Please check it out and rename and/or delete it." %numberoftemp
+            print "Careful! you have %i temp file that have not been deleted, it might contain some sweet timings for one of your videos! Please check it out and rename and/or delete it." % numberoftemp
         if numberoftemp > 1:
-            print "Careful! you have %i temp files that have not been deleted, they might contain some sweet timings for one of your videos! Please check it out and rename and/or delete them." %numberoftemp
+            print "Careful! you have %i temp files that have not been deleted, they might contain some sweet timings for one of your videos! Please check it out and rename and/or delete them." % numberoftemp
         for f in os.listdir(self.path):
-            if f == "Temp.txt" :
-                os.rename(self.path+"/Temp.txt", self.path+"/Temp_%i.txt" %numberoftemp)
+            if f == "Temp.txt":
+                os.rename(self.path + "/Temp.txt", self.path +
+                          "/Temp_%i.txt" % numberoftemp)
                 print "A backup of Temp.txt has been created"
-
 
         return config
 
-    # Creates Time Logging file and starts a stopwatch in syn with the recording software
+    # Creates Time Logging file and starts a stopwatch in syn with the
+    # recording software
     def createfile(self):
-        if self.state == 0: # If we ARE NOT recording
+        if self.state == 0:  # If we ARE NOT recording
             # Stores the time of the beginning of the recording
             self.startTime = time.time()
             # Creates a temporary text file
@@ -116,8 +124,10 @@ class TextFile(object):
 
     # Logs the current recording time
     def writetime(self):
-        if self.state == 1: # If we ARE recording
-            # Substracts the currentTime to the startTime to get the elapsed time since the start of the recording. Converts it to a hh:mm:ss format.
+        if self.state == 1:  # If we ARE recording
+            # Substracts the currentTime to the startTime to get the elapsed
+            # time since the start of the recording. Converts it to a hh:mm:ss
+            # format.
             seconds = int(time.time() - self.startTime)
             currenttime = time.strftime('%H:%M:%S', time.gmtime(seconds))
             # Writes the time on a new line in the text file
@@ -128,21 +138,26 @@ class TextFile(object):
         else:
             print "You are not recording, press %s to start recording." % self.startrecord
 
-    # Makes sure the file is closed when the recording stops and renames it to the same name as the recording
+    # Makes sure the file is closed when the recording stops and renames it to
+    # the same name as the recording
     def closefile(self):
-        if self.state == 1:# If we ARE recording
-            # Gets the name of the latest video file of the directory in order to rename the temporary text file with the same name
-            newestfile = os.path.basename(max(glob.iglob(self.path + '/*.' + self.videoformat), key=os.path.getctime))
+        if self.state == 1:  # If we ARE recording
+            # Gets the name of the latest video file of the directory in order
+            # to rename the temporary text file with the same name
+            newestfile = os.path.basename(
+                max(glob.iglob(self.path + '/*.' + self.videoformat), key=os.path.getctime))
             newname = newestfile.split('.')[0] + '.txt'
-            # Checks if there already is a file with this name to prevent overwriting an existing file
+            # Checks if there already is a file with this name to prevent
+            # overwriting an existing file
             for f in os.listdir(self.path):
                 if f == newname:
-                    newname = '%s_v2' %newname
+                    newname = '%s_v2' % newname
             # Renames the temporary text file
             os.rename(self.tempfile, self.path + '/' + newname)
             f = open(self.tempfile, 'a')
             f.close()
-            # Removes the temporary text file in case it still exists (Not sure if needed, to lazy to test)
+            # Removes the temporary text file in case it still exists (Not sure
+            # if needed, to lazy to test)
             try:
                 os.remove(self.tempfile)
             except OSError as e:  # name the Exception `e`
