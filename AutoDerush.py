@@ -11,7 +11,7 @@ import glob
 Dependencies
 FFMPEG : https://ffmpeg.org/download.html
 '''
-# TODO Use the same settings as EzLogging, maybe create another file that
+# TODO Use the same settings as EzLogging, maybe create another script that
 # handles the config and call it in both scripts?
 
 # Windows
@@ -62,14 +62,23 @@ def get_range(seconds, before, after):
     return clipRange
 
 
-def get_timings(textFile):
+def get_timings(textFile, videoFile):
     '''
     Puts the content of a textfile in a list
     :param textFile: path to the text file
+    :param videoFile: path to the videoFile
     :param line: line to read
     :return: list of all the timings
     '''
-    f = open(textFile, 'r')
+    # TODO handle the case where the text file doesn't exist
+    try:
+        f = open(textFile, 'r')
+    except:
+        print 'There is no associated text file, moving the video in a "NoTextFile" directory so that you can take a look'
+        noTextFile = sourceFolder + "NoTextFile"
+        sort_files(videoFile, noTextFile)
+        timings = []
+        return timings
     lines = f.readlines()
     timings = []
     for line in lines:
@@ -79,7 +88,17 @@ def get_timings(textFile):
     return timings
 
 
+def sort_files(fileToSort, destination):
+    basename = os.path.basename(fileToSort)
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+    destination = destination + "/" + basename
+    os.rename(fileToSort, destination)
+
+
+
 def export_clip(filename, start, length, targetname):
+    # FIXME fails to export
     '''
     :param filename: path to the original file
     :param start: start of the clip
@@ -99,25 +118,20 @@ def export_clip(filename, start, length, targetname):
                targetname]
 
     p = sp.Popen(command,
+                 shell=True,  # TODO find a replacement to this, apparently shell = True is bad
                  stdin=sp.PIPE,
                  stdout=sp.PIPE)
     output = p.communicate('S\nL\n')[0]
     print output
 
-'''
-def can_merge(timings, currentIndex, after):
-    \'''
-    checks if the timing can be merged (not if they should)
-    need to know if:
-    - we are at the last timing
-    -
-    \'''
-    # Do some work here
+def is_last_timing(currentIndex, timings):
     if currentIndex + 1 == len(timings):
         lastTiming = True
+        difference = 0
+        extended = False
     else:
         lastTiming = False
-'''
+    return lastTiming
 
 
 def clip_informations(timings, currentIndex, after):
@@ -125,15 +139,12 @@ def clip_informations(timings, currentIndex, after):
     # Compares current timing to the next one, if they are to close : Merges
     # them and extends the range
     currentTiming = timings[currentIndex]
-
-    if currentIndex + 1 == len(timings):
-        lastTiming = True
-        difference = 0
-        extended = False
-    else:
-        lastTiming = False
+    lastTiming = is_last_timing(currentIndex,timings)
+    difference = None
+    extended = None
     # Merge timings until two are to far appart or if there's nothing to merge
     while lastTiming is False:
+
         currentTiming = timings[currentIndex]
         nextTiming = timings[currentIndex + 1]
         difference = nextTiming - currentTiming
@@ -151,12 +162,15 @@ def clip_informations(timings, currentIndex, after):
             break
 
         currentIndex += 1
+        lastTiming = is_last_timing(currentIndex,timings)
     clipRange = get_range(currentTiming, before, after)
     start = clipRange['Start']
     end = clipRange['End']
     length = clipRange['Length']
     clipInfo = {'Difference': difference, 'Extended': extended,
-                'Start': start, 'End': end, 'Length': length, 'Last Timer': lastTiming}
+                'Start': start, 'End': end, 'Length': length,
+                'Last Timer': lastTiming, 'Current Index': currentIndex + 1}
+
     return clipInfo
 
 
@@ -171,24 +185,26 @@ def main():
     for videoFile in videoFiles:
         currentFile = videoFiles.index(videoFile) + 1
         numberOfFiles = len(videoFiles)
-        name = os.path.basename(videoFile.rsplit(
-            '.', 1)[0])  # Gets the name of the file
+        # Gets the name of the file
+        name = os.path.basename(videoFile.rsplit('.', 1)[0])
         textFile = sourceFolder + name + ".txt"
-        timings = get_timings(textFile)
+        timings = get_timings(textFile, videoFile)
+        print "----------------------"
+        print "Processing file " + str(currentFile) + "/" + str(numberOfFiles)
+        print name
+        print "\n"
         # Loops through all the timings for the Video file
         for timing in timings:
             currentIndex = timings.index(timing)
             numberOfTimings = len(timings)
-            print "Processing file " + str(currentFile) + "/" + str(numberOfFiles)
             print "Processing Timing " + str(currentIndex + 1) + "/" + str(numberOfTimings)
             print "Timing: " + str(timing) + "s"
             # Compares current timing to the next one, if they are to close :
             # Merges them and extends the range
             clipInfo = clip_informations(timings, currentIndex, after)
 
-            print "Seconds until next Timing : %is" % clipInfo['Difference']
-
             if clipInfo['Last Timer'] == False:
+                print "Seconds until next Timing : %is" % clipInfo['Difference']
                 if clipInfo['Extended'] == True:
                     print "The clip has been extended by %is" % clipInfo['Difference']
                 else:
@@ -199,8 +215,8 @@ def main():
             print "Clip Start: " + str(clipInfo['Start']) + "s"
             print "Clip End: " + str(clipInfo['End']) + "s"
             print "Clip Duration: " + str(clipInfo['Length']) + "s"
-
             print "\n"
-            clip = export_clip(videoFile, clipInfo['Start'], clipInfo['Length'], exportPath+"/%s_Clip_%s.mp4" % (name, str(currentTiming+1).zfill(2)))
+            clip = export_clip(videoFile, clipInfo['Start'], clipInfo[
+                               'Length'], exportPath + "/%s_Clip_%s.mp4" % (name, str(clipInfo['Current Index']).zfill(2)))
 
 main()
