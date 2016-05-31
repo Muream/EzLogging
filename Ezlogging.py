@@ -4,6 +4,7 @@ import ConfigParser
 import os.path
 import glob
 from Tkinter import Tk
+from pyhooked import hook
 r = Tk()
 # TODO reorganize the shit out of it
 # TODO change hotkey Libary
@@ -24,8 +25,6 @@ class TextFile(object):
         self.stoprecord = ''
         self.logtime = ''
         self.videoformat = ''
-
-#
 
     # All the settings stuff
     def startup(self):
