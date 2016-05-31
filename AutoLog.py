@@ -2,6 +2,7 @@
 import subprocess as sp
 import os
 import glob
+from Config import set_config
 
 
 # TODO Do something to properly tell the user how many timings there are
@@ -70,7 +71,6 @@ def get_timings(textFile, videoFile):
     :param line: line to read
     :return: list of all the timings
     '''
-    # TODO handle the case where the text file doesn't exist
     try:
         f = open(textFile, 'r')
     except:
@@ -98,7 +98,6 @@ def sort_files(fileToSort, destination):
 
 
 def export_clip(filename, start, length, targetname):
-    # FIXME fails to export
     '''
     :param filename: path to the original file
     :param start: start of the clip
@@ -118,7 +117,7 @@ def export_clip(filename, start, length, targetname):
                targetname]
     FNULL = open(os.devnull, 'w')
     p = sp.Popen(command,
-                 #shell=True,  # TODO find a replacement to this, apparently shell = True is bad
+                 #shell=True,
                  stdin=sp.PIPE,
                  stdout=sp.PIPE)
     output = p.communicate('S\nL\n')[0]
@@ -148,7 +147,7 @@ def clip_informations(timings, currentIndex, after):
         currentTiming = timings[currentIndex]
         nextTiming = timings[currentIndex + 1]
         difference = nextTiming - currentTiming
-        if difference <= after:
+        if difference <= before + after:
             # merge the timings here
             # used to add some time to the range if timings are too close to
             # each other
@@ -216,7 +215,7 @@ def main():
             print "Clip End: " + str(clipInfo['End']) + "s"
             print "Clip Duration: " + str(clipInfo['Length']) + "s"
             print "\n"
-            clip = export_clip(videoFile, clipInfo['Start'], clipInfo[
-                               'Length'], exportPath + "/%s_Clip_%s.mp4" % (name, str(clipInfo['Current Index']).zfill(2)))
+            #clip = export_clip(videoFile, clipInfo['Start'], clipInfo[
+            #                   'Length'], exportPath + "/%s_Clip_%s.mp4" % (name, str(clipInfo['Current Index']).zfill(2)))
 
 main()
