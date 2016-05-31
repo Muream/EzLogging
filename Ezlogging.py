@@ -4,7 +4,7 @@ import ConfigParser
 import os.path
 import glob
 from Tkinter import Tk
-from pyhooked import hook
+
 r = Tk()
 # TODO reorganize the shit out of it
 # TODO change hotkey Libary
