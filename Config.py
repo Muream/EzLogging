@@ -1,4 +1,5 @@
 import ConfigParser
+import os.path
 
 def set_config():
     config = {}
@@ -34,3 +35,5 @@ def set_config():
             cfgfile.close()
     except ValueError:
         print "Oops! The config file has not been created, try running the script as administrator or create a 'EzLogging.cfg' next to your 'EzLogging.py'."
+
+set_config()
