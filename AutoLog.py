@@ -2,7 +2,6 @@
 import subprocess as sp
 import os
 import glob
-from Config import set_config
 
 
 # TODO Do something to properly tell the user how many timings there are
@@ -17,7 +16,7 @@ FFMPEG : https://ffmpeg.org/download.html
 
 # Windows
 FFMPEG_BIN = "C:/Program Files/ffmpeg-20160522-git-566be4f-win64-static/bin/ffmpeg.exe"
-sourceFolder = "D:/Videos/__Youtube/__Rushes_to_sort/test/"
+sourceFolder = "D:/Videos/__Youtube/__Rushes_to_sort/"
 
 # Linux
 # FFMPEG_BIN = "/usr/bin/ffmpeg"
@@ -123,52 +122,18 @@ def export_clip(filename, start, length, targetname):
     output = p.communicate('S\nL\n')[0]
     #print output
 
-def is_last_timing(currentIndex, timings):
-    if currentIndex + 1 == len(timings):
-        lastTiming = True
-        difference = 0
-        extended = False
-    else:
-        lastTiming = False
-    return lastTiming
-
 
 def clip_informations(timings, currentIndex, after):
     # TODO Make sure the timings are correctly merged
     # Compares current timing to the next one, if they are to close : Merges
     # them and extends the range
     currentTiming = timings[currentIndex]
-    lastTiming = is_last_timing(currentIndex,timings)
-    difference = None
-    extended = None
-    # Merge timings until two are to far appart or if there's nothing to merge
-    while lastTiming is False:
-
-        currentTiming = timings[currentIndex]
-        nextTiming = timings[currentIndex + 1]
-        difference = nextTiming - currentTiming
-        if difference <= before + after:
-            # merge the timings here
-            # used to add some time to the range if timings are too close to
-            # each other
-            afterTemp = after + difference
-            del nextTiming  # remove the merged timing so that it's not processed twice
-            clipRange = get_range(currentTiming, before, afterTemp)
-            extended = True
-        else:
-            # break the loop here
-            extended = False
-            break
-
-        currentIndex += 1
-        lastTiming = is_last_timing(currentIndex,timings)
     clipRange = get_range(currentTiming, before, after)
     start = clipRange['Start']
     end = clipRange['End']
     length = clipRange['Length']
-    clipInfo = {'Difference': difference, 'Extended': extended,
-                'Start': start, 'End': end, 'Length': length,
-                'Last Timer': lastTiming, 'Current Index': currentIndex + 1}
+    clipInfo = {'Start': start, 'End': end, 'Length': length,
+                'Current Index': currentIndex + 1}
 
     return clipInfo
 
@@ -198,24 +163,13 @@ def main():
             numberOfTimings = len(timings)
             print "Processing Timing " + str(currentIndex + 1) + "/" + str(numberOfTimings)
             print "Timing: " + str(timing) + "s"
-            # Compares current timing to the next one, if they are to close :
-            # Merges them and extends the range
             clipInfo = clip_informations(timings, currentIndex, after)
-
-            if clipInfo['Last Timer'] == False:
-                print "Seconds until next Timing : %is" % clipInfo['Difference']
-                if clipInfo['Extended'] == True:
-                    print "The clip has been extended by %is" % clipInfo['Difference']
-                else:
-                    print "The clip has not been extended"
-            else:
-                print "This is the last timing"
 
             print "Clip Start: " + str(clipInfo['Start']) + "s"
             print "Clip End: " + str(clipInfo['End']) + "s"
             print "Clip Duration: " + str(clipInfo['Length']) + "s"
             print "\n"
-            #clip = export_clip(videoFile, clipInfo['Start'], clipInfo[
-            #                   'Length'], exportPath + "/%s_Clip_%s.mp4" % (name, str(clipInfo['Current Index']).zfill(2)))
+            clip = export_clip(videoFile, clipInfo['Start'], clipInfo[
+                               'Length'], exportPath + "/%s_Clip_%s.mp4" % (name, str(clipInfo['Current Index']).zfill(2)))
 
 main()
