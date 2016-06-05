@@ -3,13 +3,29 @@ ProxyTaMere
 
 Tools developped in order to ease the work on the youtube channel Proxy Ta Mere
 
-EzLogging : Use it when you are recording to log the time of your highlights
+**EzLogging** : Use it when you are recording to log the time of your highlights
 
-AutoLog : Will automatically cut the video around the timings logged with EzLogging
+**AutoLog** : Will automatically cut the video around the timings logged with **EzLogging**
 
 Installation
 ---
-Needs to be filled in
+Needs to be more accurate
+
+I will try to make the installation process less of a pain in the ass in the  
+future but this is not a priority at the moment.
+
+First of all, you will need python 2.7 installed
+
+There are a few dependencies that needs to be installed:  
+
+For **EzLogging**:
+* Pyhk
+* Pyhook
+* Pywin32
+
+For **AutoLog**:
+* ffmpeg
+
 
 How to use
 ---
@@ -23,17 +39,17 @@ First of all, launch the Config.py and follow the instructions
 * press your start record hotkey when you want to start recording
 * press your log time hotkey to log the time of the recording
 note that if you press this hotkey two times in a short period of time  
-AutoLog will be smart and will merge the clips into one longer clip  
+**AutoLog** will be smart and will merge the clips into one longer clip  
 (cf: **AutoLog** for more info)
 * press your stop record hotkey when you want to stop recording
 
 **AutoLog**:
 
 * Use it when you want to cut out the clips you logged with **EzLogging**
-* AutoLog will detect if there's some overlap in the clips.  
+* **AutoLog** will detect if there's some overlap in the clips.  
 in the **Config**, you set two values telling **AutoLog** when to cut Before and After  
 the timing logged with **EzLogging**.  
 As an example let's say Before is set to 20 seconds and After is set to 10.  
-my clips will last 30 seconds. If you press the log time two times in 30 seconds  
+your clips will last 30 seconds. If you press the log time two times in 30 seconds  
 the clips will be merged together (you can repeat this as long as you want,  
 allowing you to log longer clips than you would have otherwise)
