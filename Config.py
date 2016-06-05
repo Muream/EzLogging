@@ -6,7 +6,7 @@ import os
 class Settings(object):
 
     def __init__(self):
-
+        
         self.videoPath = None
         self.videoFormat = None
         self.ffmpegPath = None
