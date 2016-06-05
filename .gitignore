@@ -1,4 +1,5 @@
 EzLogging.cfg
-test_pyhook.py
 .idea
 Config.pyc
+AutoLog_fromMaster.py
+randomTests.py
