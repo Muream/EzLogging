@@ -2,64 +2,126 @@
 import subprocess as sp
 import os
 import glob
-
+from Config import Settings
 
 # TODO Do something to properly tell the user how many timings there are
 # for the current video and which timings is currently processed
+# TODO export Clips
+# TODO give some indication of how many merges there have been for each Clip
+# maybe in the name of the file?
 
-'''
-Dependencies
-FFMPEG : https://ffmpeg.org/download.html
-'''
-# TODO Use the same settings as EzLogging, maybe create another script that
-# handles the config and call it in both scripts?
-
-# Windows
-FFMPEG_BIN = "C:/Program Files/ffmpeg-20160522-git-566be4f-win64-static/bin/ffmpeg.exe"
-sourceFolder = "D:/Videos/__Youtube/__Rushes_to_sort/"
-
-# Linux
-# FFMPEG_BIN = "/usr/bin/ffmpeg"
-# sourceFolder = "/home/muream/Videos/test/"
-
-# In seconds
-fps = 30
-before = 20
-after = 10
+mySettings = Settings()
+mySettings.set_config()
+mySettings.read_config()
 
 
-def convert_time(timing):
+class Clip:
+
+    def __init__(self, timing, originalFile):
+
+        self.timing = timing
+        self.path = None
+        self.originalFile = originalFile
+        self.timingSeconds = None
+        self.start = None
+        self.end = None
+        self.length = None
+
+    def timing_to_seconds(self):
+        '''
+        Converts the hh:mm:ss format in seconds
+        '''
+        hour = int(self.timing[0:2])
+        minute = int(self.timing[3:5])
+        second = int(self.timing[6:8])
+        hour = hour * 60 * 60
+        minute = minute * 60
+        timingSeconds = second
+        self.timingSeconds = hour + minute + second
+
+    def get_range(self):
+        # TODO Make sure the range of the clip is the right one
+        '''
+        Gets the range of the clip
+        '''
+        self.start = self.timingSeconds - mySettings.cutBefore
+        if self.start < 0:
+            self.start = 0
+        self.end = self.timingSeconds + mySettings.cutAfter
+        self.length = self.end - self.start
+
+    def should_merge(self, nextStart):
+        '''
+        Defines if a clip should be merged with the one before
+        '''
+        if self.start <= nextStart <= self.end:
+            shouldMerge = True
+        else:
+            shouldMerge = False
+
+        return shouldMerge
+
+    def merge_clips(self, nextEnd, timingsList, nextIndex):
+        '''
+        Merge clips
+        '''
+        self.end = nextEnd
+        self.length = self.end - self.start
+        del timingsList[nextIndex]
+
+    def print_infos(self):
+        print "Clip infos:"
+        print "Timing: {}".format(self.timing)
+        # print "Seconds: {}s".format(self.timingSeconds)
+        print "start: {}".format(seconds_to_timing(self.start))
+        print "end: {}".format(seconds_to_timing(self.end))
+        print "length: {}s".format(self.length)
+        print "path : {}".format(self.path)
+        print
+
+    def export_clip(self):
+        '''
+        :param filename: path to the original file
+        :param start: start of the clip
+        :param end: end of the clip
+        :param targetname: path to the exported file
+        '''
+        if not os.path.exists(self.path):
+            command = ["ffmpeg",
+                       "-i", self.originalFile,
+                       "-map", "0:0",
+                       "-map", "0:1",
+                       "-map", "0:2",
+                       "-map", "0:3",
+                       "-map", "0:4",
+                       "-ss", "%0.2f" % self.start,
+                       "-t", "%0.2f" % self.length,
+                       "-codec", "copy",
+                       self.path]
+            FNULL = open(os.devnull, 'w')
+            p = sp.Popen(command,
+                         #shell=True,
+                         #stdin=sp.PIPE,
+                         stdout=sp.PIPE,
+                         stderr=sp.PIPE
+                         )
+            #output = p.communicate('S\nL\n')[0]
+            output, error = p.communicate()
+            #print output
+        else:
+            print "Clip already logged delete it if you want to log it again."
+
+def sort_files(fileToSort, destination):
     '''
-    Converts the timing in seconds
-    :param timing: the timing with a format hh:mm:ss
-    :return: time in seconds
+    simply moves file to said destination
+    :param fileToSort: Path to the file
+    :param destination: where you want the file to be moved.
     '''
-    hour = int(timing[0:2])
-    minute = int(timing[3:5])
-    second = int(timing[6:8])
-    hour = hour * 60 * 60
-    minute = minute * 60
-    second = second
-    seconds = hour + minute + second
-    return seconds
-
-
-def get_range(seconds, before, after):
-    # TODO Make sure the range of the clip is the right one
-    '''
-    Gets the range of the clip
-    :param seconds: the timing in seconds
-    :param before: number of seconds before the timing
-    :param after: number of seconds after the timing
-    :return: the range in a list
-    '''
-    start = seconds - before
-    if start < 0:
-        start = 0
-    end = seconds + after
-    length = end - start
-    clipRange = {'Start': start, 'End': end, 'Length': length}
-    return clipRange
+    basename = os.path.basename(fileToSort)
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+    destination = destination + "/" + basename
+    os.rename(fileToSort, destination)
 
 
 def get_timings(textFile, videoFile):
@@ -70,106 +132,96 @@ def get_timings(textFile, videoFile):
     :param line: line to read
     :return: list of all the timings
     '''
-    try:
-        f = open(textFile, 'r')
-    except:
-        print 'There is no associated text file, moving the video in a "NoTextFile" directory so that you can take a look'
-        noTextFile = sourceFolder + "NoTextFile"
-        sort_files(videoFile, noTextFile)
-        timings = []
-        return timings
+    f = open(textFile, 'r')
     lines = f.readlines()
     timings = []
     for line in lines:
         line = line[:-1]
-        seconds = convert_time(line)
-        timings.append(seconds)
+        timings.append(line)
+    f.close()
     return timings
 
+def textFile_exists(textFile):
+    '''Checks if the file exists'''
+    if os.path.isfile(textFile) ==  False:
+        print '''There is no associated text file, moving the video in a
+                "NoTextFile" directory so that you can take a look'''
+        return False
+    return True
 
-def sort_files(fileToSort, destination):
-    basename = os.path.basename(fileToSort)
-    if not os.path.exists(destination):
-        os.makedirs(destination)
-    destination = destination + "/" + basename
-    os.rename(fileToSort, destination)
-
-
-
-def export_clip(filename, start, length, targetname):
+def seconds_to_timing(seconds):
     '''
-    :param filename: path to the original file
-    :param start: start of the clip
-    :param end: end of the clip
-    :param targetname: path to the exported file
+    Converts the seconds in hh:mm:ss format
     '''
-    command = ["ffmpeg",
-               "-i", filename,
-               "-map", "0:0",
-               "-map", "0:1",
-               "-map", "0:2",
-               "-map", "0:3",
-               "-map", "0:4",
-               "-ss", "%0.2f" % start,
-               "-t", "%0.2f" % length,
-               "-codec", "copy",
-               targetname]
-    FNULL = open(os.devnull, 'w')
-    p = sp.Popen(command,
-                 #shell=True,
-                 stdin=sp.PIPE,
-                 stdout=sp.PIPE)
-    output = p.communicate('S\nL\n')[0]
-    #print output
-
-
-def clip_informations(timings, currentIndex, after):
-    # TODO Make sure the timings are correctly merged
-    # Compares current timing to the next one, if they are to close : Merges
-    # them and extends the range
-    currentTiming = timings[currentIndex]
-    clipRange = get_range(currentTiming, before, after)
-    start = clipRange['Start']
-    end = clipRange['End']
-    length = clipRange['Length']
-    clipInfo = {'Start': start, 'End': end, 'Length': length,
-                'Current Index': currentIndex + 1}
-
-    return clipInfo
+    m, s = divmod(seconds, 60)
+    h, m = divmod(m, 60)
+    return "{0:0>2}".format(h) + ":{0:0>2}".format(m) + ":{0:0>2}".format(s)
 
 
 def main():
+    # TODO use real timings instead of this list
+
     # Creates the "Derush" Folder
-    exportPath = sourceFolder + "Derush"
+    exportPath = mySettings.videoPath + "/Derush"
     if not os.path.exists(exportPath):
         os.makedirs(exportPath)
 
-    # Loops through all the video files in said folder
-    videoFiles = glob.glob(sourceFolder + "*.mp4")
+    # checks if there's an associated textfile with the video, if not, move the
+    # video elsewhere
+    videoFiles = glob.glob("{}/*.{}".format(mySettings.videoPath, mySettings.videoFormat))
     for videoFile in videoFiles:
-        currentFile = videoFiles.index(videoFile) + 1
-        numberOfFiles = len(videoFiles)
-        # Gets the name of the file
         name = os.path.basename(videoFile.rsplit('.', 1)[0])
-        textFile = sourceFolder + name + ".txt"
+        textFile = "{}/{}.txt".format(mySettings.videoPath, name)
+        textFileExists = textFile_exists(textFile)
+        if textFileExists == False:
+                noTextFile = "{}/NoTextFile".format(mySettings.videoPath)
+                sort_files(videoFile, noTextFile)
+    # Loops through all the remaining videos in said folder
+    videoFiles = glob.glob("{}/*.{}".format(mySettings.videoPath, mySettings.videoFormat))
+    for videoFile in videoFiles:
+
+
+        name = os.path.basename(videoFile.rsplit('.', 1)[0])
+        textFile = "{}/{}.txt".format(mySettings.videoPath, name)
         timings = get_timings(textFile, videoFile)
-        print "----------------------"
-        print "Processing file " + str(currentFile) + "/" + str(numberOfFiles)
-        print name
-        print "\n"
-        # Loops through all the timings for the Video file
+        mergedClips = []
+
+
+        # processes all timings in file
         for timing in timings:
+
             currentIndex = timings.index(timing)
-            numberOfTimings = len(timings)
-            print "Processing Timing " + str(currentIndex + 1) + "/" + str(numberOfTimings)
-            print "Timing: " + str(timing) + "s"
-            clipInfo = clip_informations(timings, currentIndex, after)
+            clip = Clip(timing, videoFile)
+            clip.timing_to_seconds()
+            clip.get_range()
 
-            print "Clip Start: " + str(clipInfo['Start']) + "s"
-            print "Clip End: " + str(clipInfo['End']) + "s"
-            print "Clip Duration: " + str(clipInfo['Length']) + "s"
-            print "\n"
-            clip = export_clip(videoFile, clipInfo['Start'], clipInfo[
-                               'Length'], exportPath + "/%s_Clip_%s.mp4" % (name, str(clipInfo['Current Index']).zfill(2)))
+            while True and currentIndex + 1 < len(timings):
+                nextTiming = timings[currentIndex + 1]
+                nextClip = Clip(nextTiming, videoFile)
+                nextClip.timing_to_seconds()
+                nextClip.get_range()
+                shouldMerge = clip.should_merge(nextClip.start)
 
+                if shouldMerge == True:
+                    clip.merge_clips(nextClip.end, timings, currentIndex + 1)
+                    # goes back from one index since merge_clips deletes one item
+                    # from the list
+                else:
+                    break
+                currentIndex = currentIndex + 1
+
+            mergedClips.append(clip)
+
+        # exports all the processed timings
+        for clip in mergedClips:
+            videoIndex = videoFiles.index(videoFile)
+            clipIndex = mergedClips.index(clip)
+            # Probably not the cleanest way to do this :
+            clip.path = "{}/{}_Clip_".format(exportPath, name)+"{0:0>3}".format(clipIndex+1)+".{}".format(mySettings.videoFormat)
+            print "\n--------------\n"
+            print "Video {}/{}\n".format(videoIndex+1, len(videoFiles))
+            print "Name: {}\n".format(name)
+            print "Clip {}/{}".format(clipIndex+1, len(mergedClips))
+            clip.print_infos()
+            clip.export_clip()
 main()
