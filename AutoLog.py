@@ -101,7 +101,7 @@ class Clip:
             FNULL = open(os.devnull, 'w')
             p = sp.Popen(command,
                          #shell=True,
-                         #stdin=sp.PIPE,
+                         stdin=sp.PIPE,
                          stdout=sp.PIPE,
                          stderr=sp.PIPE
                          )
@@ -161,10 +161,15 @@ def seconds_to_timing(seconds):
 def main():
     # TODO use real timings instead of this list
 
-    # Creates the "Derush" Folder
-    exportPath = mySettings.videoPath + "/Derush"
+    # Creates the "Clips" Folder
+    exportPath = mySettings.videoPath + "/Clips"
     if not os.path.exists(exportPath):
         os.makedirs(exportPath)
+
+    # Creates the "Processed" Folder
+    processedPath = mySettings.videoPath + "/Processed"
+    if not os.path.exists(processedPath):
+        os.makedirs(processedPath)
 
     # checks if there's an associated textfile with the video, if not, move the
     # video elsewhere
@@ -224,4 +229,8 @@ def main():
             print "Clip {}/{}".format(clipIndex+1, len(mergedClips))
             clip.print_infos()
             clip.export_clip()
+
+        sort_files(videoFile, processedPath)
+        sort_files(textFile, processedPath)
+        print "File moved to the Processd folder"
 main()
