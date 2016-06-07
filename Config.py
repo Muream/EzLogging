@@ -6,7 +6,7 @@ import os
 class Settings(object):
 
     def __init__(self):
-        
+
         self.videoPath = None
         self.videoFormat = None
         self.ffmpegPath = None
@@ -24,15 +24,15 @@ class Settings(object):
         try:
             # If the config file doesn't exist, create it and ask for the
             # user's configuration
-            if not os.path.isfile('EzLogging.cfg'):
+            if not os.path.isfile('Config.cfg'):
                 # Creates the config file by asking the user
-                cfgfile = open('EzLogging.cfg', 'w')
+                cfgfile = open('Config.cfg', 'w')
                 cfg.add_section('File')
                 cfg.add_section('Hotkeys')
 
                 # ask the user the settings he wants to use
                 print
-                print "This is the first time you are using EzLogging, you will need to set a few things up."
+                print "This is the first time you are using Config, you will need to set a few things up."
                 print "This is VERY IMPORTANT, otherwise nothing will work."
                 videoPath = raw_input("Path of your recordings: ")
                 videoPath = videoPath.replace('\\', '/')
@@ -72,12 +72,12 @@ class Settings(object):
                 cfg.write(cfgfile)
                 cfgfile.close()
         except ValueError:
-            print "Oops! The config file has not been created, try running the script as administrator or create a 'EzLogging.cfg' next to your 'EzLogging.py'."
+            print "Oops! The config file has not been created, try running the script as administrator or create a 'Config.cfg' next to your 'Config.py'."
 
     def read_config(self):
         config={}
         cfg=ConfigParser.ConfigParser()
-        cfg.read('EzLogging.cfg')
+        cfg.read('Config.cfg')
         # Puts all the settings in a dictionary in order to re-use it later
         for section in cfg.sections():
             options=cfg.options(section)
