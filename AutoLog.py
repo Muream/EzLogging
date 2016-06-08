@@ -1,12 +1,8 @@
-
 import subprocess as sp
 import os
 import glob
 from Config import Settings
 
-# TODO Do something to properly tell the user how many timings there are
-# for the current video and which timings is currently processed
-# TODO export Clips
 # TODO give some indication of how many merges there have been for each Clip
 # maybe in the name of the file?
 
@@ -159,7 +155,6 @@ def seconds_to_timing(seconds):
 
 
 def main():
-    # TODO use real timings instead of this list
 
     # Creates the "Clips" Folder
     exportPath = mySettings.videoPath + "/Clips"
