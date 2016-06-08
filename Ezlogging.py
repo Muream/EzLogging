@@ -1,6 +1,5 @@
 import pyhk
 import time
-import ConfigParser
 import os.path
 import glob
 from Config import Settings
@@ -21,7 +20,7 @@ class TextFile(object):
         self.filepath = ''
         self.startTime = 0
 
-    # Creates Time Logging file and starts a stopwatch in syn with the
+    # Creates Time Logging file and starts a stopwatch in sync with the
     # recording software
     def createfile(self):
         if self.state == 0:  # If we ARE NOT recording
