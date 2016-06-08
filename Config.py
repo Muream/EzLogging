@@ -12,7 +12,6 @@ class Settings(object):
         self.ffmpegPath = None
         self.cutBefore = None
         self.cutAfter = None
-        self.fps = None
         self.startRecord = None
         self.stopRecord = None
         self.logTime = None
@@ -48,7 +47,6 @@ class Settings(object):
                     'How long before the timing should AutoLog cut? (in seconds): ')
                 cutAfter = raw_input(
                     'How long after the timing should AutoLog cut? (in seconds): ')
-                fps = raw_input('fps of your videos: ')
 
                 print
                 print 'List of possible hotkeys (at the bottom of the page) : http://schurpf.com/python/python-hotkey-module/pyhk-end-user-documentation/'
@@ -65,7 +63,6 @@ class Settings(object):
                 cfg.set('File', 'ffmpeg path', ffmpegPath)
                 cfg.set('File', 'cut before', cutBefore)
                 cfg.set('File', 'cut after', cutAfter)
-                cfg.set('File', 'fps', fps)
                 cfg.set('Hotkeys', 'start record', startRecord)
                 cfg.set('Hotkeys', 'stop record', stopRecord)
                 cfg.set('Hotkeys', 'log time', logTime)
@@ -95,7 +92,6 @@ class Settings(object):
         self.ffmpegPath = config['ffmpeg path']
         self.cutBefore = int(config['cut before'])
         self.cutAfter = int(config['cut after'])
-        self.fps = float(config['fps'])
         self.startRecord = config['start record']
         self.stopRecord = config['stop record']
         self.logTime = config['log time']
