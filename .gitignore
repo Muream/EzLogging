@@ -4,3 +4,4 @@ Config.pyc
 *.spec
 build
 dist
+tkinterTest.py
