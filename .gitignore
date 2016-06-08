@@ -1,3 +1,6 @@
 Config.cfg
 .idea
 Config.pyc
+*.spec
+build
+dist
