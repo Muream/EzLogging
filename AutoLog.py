@@ -96,16 +96,17 @@ class Clip:
                        self.path]
             FNULL = open(os.devnull, 'w')
             p = sp.Popen(command,
-                         #shell=True,
+                         # shell=True,
                          stdin=sp.PIPE,
                          stdout=sp.PIPE,
                          stderr=sp.PIPE
                          )
-            #output = p.communicate('S\nL\n')[0]
+            # output = p.communicate('S\nL\n')[0]
             output, error = p.communicate()
-            #print output
+            # print output
         else:
             print "Clip already logged delete it if you want to log it again."
+
 
 def sort_files(fileToSort, destination):
     '''
@@ -137,13 +138,15 @@ def get_timings(textFile, videoFile):
     f.close()
     return timings
 
+
 def textFile_exists(textFile):
     '''Checks if the file exists'''
-    if os.path.isfile(textFile) ==  False:
+    if os.path.isfile(textFile) is False:
         print '''There is no associated text file, moving the video in a
                 "NoTextFile" directory so that you can take a look'''
         return False
     return True
+
 
 def seconds_to_timing(seconds):
     '''
@@ -168,24 +171,24 @@ def main():
 
     # checks if there's an associated textfile with the video, if not, move the
     # video elsewhere
-    videoFiles = glob.glob("{}/*.{}".format(mySettings.videoPath, mySettings.videoFormat))
+    videoFiles = glob.glob(
+        "{}/*.{}".format(mySettings.videoPath, mySettings.videoFormat))
     for videoFile in videoFiles:
         name = os.path.basename(videoFile.rsplit('.', 1)[0])
         textFile = "{}/{}.txt".format(mySettings.videoPath, name)
         textFileExists = textFile_exists(textFile)
-        if textFileExists == False:
-                noTextFile = "{}/NoTextFile".format(mySettings.videoPath)
-                sort_files(videoFile, noTextFile)
+        if textFileExists is False:
+            noTextFile = "{}/NoTextFile".format(mySettings.videoPath)
+            sort_files(videoFile, noTextFile)
     # Loops through all the remaining videos in said folder
-    videoFiles = glob.glob("{}/*.{}".format(mySettings.videoPath, mySettings.videoFormat))
+    videoFiles = glob.glob(
+        "{}/*.{}".format(mySettings.videoPath, mySettings.videoFormat))
     for videoFile in videoFiles:
-
 
         name = os.path.basename(videoFile.rsplit('.', 1)[0])
         textFile = "{}/{}.txt".format(mySettings.videoPath, name)
         timings = get_timings(textFile, videoFile)
         mergedClips = []
-
 
         # processes all timings in file
         for timing in timings:
@@ -202,10 +205,10 @@ def main():
                 nextClip.get_range()
                 shouldMerge = clip.should_merge(nextClip.start)
 
-                if shouldMerge == True:
+                if shouldMerge is True:
                     clip.merge_clips(nextClip.end, timings, currentIndex + 1)
-                    # goes back from one index since merge_clips deletes one item
-                    # from the list
+                    # goes back from one index since merge_clips deletes one
+                    # item from the list
                 else:
                     break
                 currentIndex = currentIndex + 1
@@ -217,11 +220,13 @@ def main():
             videoIndex = videoFiles.index(videoFile)
             clipIndex = mergedClips.index(clip)
             # Probably not the cleanest way to do this :
-            clip.path = "{}/{}_Clip_".format(exportPath, name)+"{0:0>3}".format(clipIndex+1)+".{}".format(mySettings.videoFormat)
+            clip.path = "{}/{}_Clip_".format(exportPath, name) + \
+                "{0:0>3}".format(clipIndex + 1) + ".{}" \
+                .format(mySettings.videoFormat)
             print "\n--------------\n"
-            print "Video {}/{}\n".format(videoIndex+1, len(videoFiles))
+            print "Video {}/{}\n".format(videoIndex + 1, len(videoFiles))
             print "Name: {}\n".format(name)
-            print "Clip {}/{}".format(clipIndex+1, len(mergedClips))
+            print "Clip {}/{}".format(clipIndex + 1, len(mergedClips))
             clip.print_infos()
             clip.export_clip()
 
