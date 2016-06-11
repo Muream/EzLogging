@@ -4,8 +4,8 @@ import os.path
 import glob
 from Config import Settings
 
-# TODO reorganize the shit out of it
-# TODO change hotkey Libary
+# TODO:40 reorganize the shit out of it
+# TODO:10 change hotkey Libary
 
 mySettings = Settings()
 mySettings.set_config()
