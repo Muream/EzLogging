@@ -11,6 +11,7 @@ mySettings = Settings()
 mySettings.set_config()
 mySettings.read_config()
 
+
 class TextFile(object):
 
     def __init__(self):
@@ -31,10 +32,12 @@ class TextFile(object):
             self.tempfile = '{}/{}'.format(mySettings.videoPath, tempname)
             f = open(self.tempfile, 'a')
             f.close()
-            print '\n\n-----------------------------------------------------------------------------------------------------'
+            print '\n\n---------'
             print '\nRecording...'
             print 'A temporary file has been created, do not delete it.\n'
-            print 'IMPORTANT: Do not press {} until your recording software created the video file (a few seconds at most).\n'.format(mySettings.stopRecord)
+            print 'IMPORTANT: Do not press {} until your recording software'\
+                'created the video file (a few seconds at most).\n'\
+                .format(mySettings.stopRecord)
             # Switches to a Recording state
             self.state = 1
         else:
@@ -54,7 +57,8 @@ class TextFile(object):
             f.close()
             print 'New entry : ' + currenttime
         else:
-            print "You are not recording, press {} to start recording.".format(mySettings.startRecord)
+            print "You are not recording, press {} to start recording."\
+                .format(mySettings.startRecord)
 
     # Makes sure the file is closed when the recording stops and renames it to
     # the same name as the recording
@@ -63,7 +67,8 @@ class TextFile(object):
             # Gets the name of the latest video file of the directory in order
             # to rename the temporary text file with the same name
             newestfile = os.path.basename(
-                max(glob.iglob(mySettings.videoPath + '/*.' + mySettings.videoFormat), key=os.path.getctime))
+                max(glob.iglob(mySettings.videoPath + '/*.' +
+                    mySettings.videoFormat), key=os.path.getctime))
             newname = newestfile.split('.')[0] + '.txt'
             # Checks if there already is a file with this name to prevent
             # overwriting an existing file
@@ -84,7 +89,8 @@ class TextFile(object):
             self.state = 0
 
         else:
-            print "You are not recording, press {} to start recording.".format(mySettings.startRecord)
+            print "You are not recording, press {} to start recording."\
+                .format(mySettings.startRecord)
 
 
 def main():
