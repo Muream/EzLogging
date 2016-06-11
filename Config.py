@@ -3,6 +3,7 @@ import os
 
 # TODO deal with dumb fucks who enter the wrong type of variable
 
+
 class Settings(object):
 
     def __init__(self):
@@ -31,25 +32,29 @@ class Settings(object):
 
                 # ask the user the settings he wants to use
                 print
-                print "This is the first time you are using Config, you will need to set a few things up."
+                print "This is the first time you are using Config, you will"\
+                    "need to set a few things up."
                 print "This is VERY IMPORTANT, otherwise nothing will work."
                 videoPath = raw_input("Path of your recordings: ")
                 videoPath = videoPath.replace('\\', '/')
                 videoformat = raw_input(
                     "Format of your recording (ex: mp4, avi, etc.): ")
                 print
-                print (
-                    'If you do not have ffmpeg insalled: https://ffmpeg.org/download.html')
+                print ('If you do not have ffmpeg insalled: "\
+                    "https://ffmpeg.org/download.html')
                 ffmpegPath = raw_input(
-                    "Path of your ffmpeg (similar to this: installationFolder/ffmpeg/bin/ffmpeg.exe): ")
+                    "Path of your ffmpeg (similar to this: "
+                    "installationFolder/ffmpeg/bin/ffmpeg.exe): ")
                 ffmpegPath = ffmpegPath.replace('\\', '/')
-                cutBefore = raw_input(
-                    'How long before the timing should AutoLog cut? (in seconds): ')
-                cutAfter = raw_input(
-                    'How long after the timing should AutoLog cut? (in seconds): ')
+                cutBefore = raw_input('How long before the timing should "\
+                    "AutoLog cut? (in seconds): ')
+                cutAfter = raw_input('How long after the timing should AutoLog"\
+                    "cut? (in seconds): ')
 
                 print
-                print 'List of possible hotkeys (at the bottom of the page) : http://schurpf.com/python/python-hotkey-module/pyhk-end-user-documentation/'
+                print 'List of possible hotkeys (at the bottom of the page) : "\
+                    "http://schurpf.com/python/python-hotkey-module/"\
+                    "pyhk-end-user-documentation/'
                 startRecord = raw_input(
                     "Shortcut used to start the recording: ")
                 stopRecord = raw_input(
@@ -69,23 +74,25 @@ class Settings(object):
                 cfg.write(cfgfile)
                 cfgfile.close()
         except ValueError:
-            print "Oops! The config file has not been created, try running the script as administrator or create a 'Config.cfg' next to your 'Config.py'."
+            print "Oops! The config file has not been created, try running "\
+                "the script as administrator or create a 'Config.cfg' next "\
+                "to your 'Config.py'."
 
     def read_config(self):
-        config={}
-        cfg=ConfigParser.ConfigParser()
+        config = {}
+        cfg = ConfigParser.ConfigParser()
         cfg.read('Config.cfg')
         # Puts all the settings in a dictionary in order to re-use it later
         for section in cfg.sections():
-            options=cfg.options(section)
+            options = cfg.options(section)
             for option in options:
                 try:
-                    config[option]=cfg.get(section, option)
+                    config[option] = cfg.get(section, option)
                     if config[option] == -1:
                         print ("skip: %s" % option)
                 except:
                     print("exception on %s!" % option)
-                    config[option]=None
+                    config[option] = None
 
         self.videoPath = config['video path']
         self.videoFormat = config['video format']
