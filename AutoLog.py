@@ -3,7 +3,7 @@ import os
 import glob
 from Config import Settings
 
-# TODO:30 give some indication of how many merges there have been for each Clip
+# TRASH: give some indication of how many merges there have been for each Clip
 # maybe in the name of the file?
 
 mySettings = Settings()
@@ -36,7 +36,7 @@ class Clip:
         self.timingSeconds = hour + minute + second
 
     def get_range(self):
-        # TODO:0 Make sure the range of the clip is the right one
+        # #DONE:0 Make sure the range of the clip is the right one
         '''
         Gets the range of the clip
         '''

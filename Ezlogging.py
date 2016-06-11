@@ -4,8 +4,8 @@ import os.path
 import glob
 from Config import Settings
 
-# TODO:40 reorganize the shit out of it
-# TODO:10 change hotkey Libary
+# TODO: reorganize the shit out of it
+# TODO: change hotkey Libary
 
 mySettings = Settings()
 mySettings.set_config()
@@ -68,7 +68,7 @@ class TextFile(object):
             # to rename the temporary text file with the same name
             newestfile = os.path.basename(
                 max(glob.iglob(mySettings.videoPath + '/*.' +
-                    mySettings.videoFormat), key=os.path.getctime))
+                               mySettings.videoFormat), key=os.path.getctime))
             newname = newestfile.split('.')[0] + '.txt'
             # Checks if there already is a file with this name to prevent
             # overwriting an existing file
