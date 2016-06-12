@@ -3,8 +3,6 @@ import os
 import glob
 from Config import Settings
 
-# TRASH: give some indication of how many merges there have been for each Clip
-# maybe in the name of the file?
 
 mySettings = Settings()
 mySettings.set_config()
@@ -68,7 +66,6 @@ class Clip:
     def print_infos(self):
         print "Clip infos:"
         print "Timing: {}".format(self.timing)
-        # print "Seconds: {}s".format(self.timingSeconds)
         print "start: {}".format(seconds_to_timing(self.start))
         print "end: {}".format(seconds_to_timing(self.end))
         print "length: {}s".format(self.length)
@@ -77,11 +74,9 @@ class Clip:
 
     def export_clip(self):
         '''
-        :param filename: path to the original file
-        :param start: start of the clip
-        :param end: end of the clip
-        :param targetname: path to the exported file
+        Exports the clip
         '''
+        # TODO check what's going on with the audio tracks being out of sync.
         if not os.path.exists(self.path):
             command = ["ffmpeg",
                        "-i", self.originalFile,
@@ -126,7 +121,6 @@ def get_timings(textFile, videoFile):
     Puts the content of a textfile in a list
     :param textFile: path to the text file
     :param videoFile: path to the videoFile
-    :param line: line to read
     :return: list of all the timings
     '''
     f = open(textFile, 'r')
@@ -140,7 +134,9 @@ def get_timings(textFile, videoFile):
 
 
 def textFile_exists(textFile):
-    '''Checks if the file exists'''
+    '''
+    Checks if the file exists
+    '''
     if os.path.isfile(textFile) is False:
         print '''There is no associated text file, moving the video in a
                 "NoTextFile" directory so that you can take a look'''
