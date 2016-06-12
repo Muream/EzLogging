@@ -4,5 +4,5 @@ Config.pyc
 *.spec
 build
 dist
-tkinterTest.py
+PySideTest.py
 .imdone
