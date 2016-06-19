@@ -6,6 +6,7 @@ from Config import Settings
 
 # TODO: reorganize the shit out of it
 # TODO: change hotkey Libary
+# TODO: check what's going on "Careful! you have 1 temp file that have not been deleted, it might contain some sweet timings for one of your videos!"
 
 mySettings = Settings()
 mySettings.set_config()
