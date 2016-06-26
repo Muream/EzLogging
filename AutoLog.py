@@ -8,6 +8,9 @@ mySettings = Settings()
 mySettings.set_config()
 mySettings.read_config()
 
+# TODO : check why it exports some clips after they've been merged to
+# other ones
+
 
 class Clip:
 
@@ -78,7 +81,8 @@ class Clip:
         '''
         # TODO check what's going on with the audio tracks being out of sync.
         if not os.path.exists(self.path):
-            command = ["ffmpeg",
+            # changed "ffmpeg" to mySettings.ffmpeg
+            command = [mySettings.ffmpeg,
                        "-i", self.originalFile,
                        "-map", "0:0",
                        "-map", "0:1",
@@ -229,4 +233,7 @@ def main():
         sort_files(videoFile, processedPath)
         sort_files(textFile, processedPath)
         print "File moved to the Processd folder"
-main()
+
+
+if __name__ == '__main__':
+    main()
