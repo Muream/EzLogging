@@ -3,10 +3,12 @@ import time
 import os.path
 import glob
 from Config import Settings
+from pyhooked import hook
 
-# TODO: reorganize the shit out of it
-# TODO: change hotkey Libary
-# TODO: check what's going on "Careful! you have 1 temp file that have not been deleted, it might contain some sweet timings for one of your videos!"
+
+# TODO:50 reorganize the shit out of it
+# TODO:10 change hotkey Libary
+# TODO:20 check what's going on "Careful! you have 1 temp file that have not been deleted, it might contain some sweet timings for one of your videos!"
 
 mySettings = Settings()
 mySettings.set_config()
@@ -94,14 +96,23 @@ class TextFile(object):
                 .format(mySettings.startRecord)
 
 
-def main():
-    hot = pyhk.pyhk()
-    f = TextFile()
-    hot.addHotkey([mySettings.startRecord], f.createfile)
-    hot.addHotkey([mySettings.logTime], f.writetime)
-    hot.addHotkey([mySettings.stopRecord], f.closefile)
-    hot.start()
+# Using Pyhk ---> can't press multiple keys at once
+# def main():
+#     hot = pyhk.pyhk()
+#     f = TextFile()
+#     hot.addHotkey([mySettings.startRecord], f.createfile)
+#     hot.addHotkey([mySettings.logTime], f.writetime)
+#     hot.addHotkey([mySettings.stopRecord], f.closefile)
+#     hot.start()
 
+# using pyhooked ---> CAN press multiple keys at once
+def main():
+    hk = hook()
+    f = TextFile()
+    hk.Hotkey([mySettings.startRecord], f.createfile)
+    hk.Hotkey([mySettings.logTime], f.writetime)
+    hk.Hotkey([mySettings.stopRecord], f.closefile)
+    hk.listen()
 
 if __name__ == '__main__':
     main()

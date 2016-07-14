@@ -8,7 +8,7 @@ mySettings = Settings()
 mySettings.set_config()
 mySettings.read_config()
 
-# TODO : check why it exports some clips after they've been merged to
+# TODO:0 : check why it exports some clips after they've been merged to
 # other ones
 
 
@@ -79,7 +79,7 @@ class Clip:
         '''
         Exports the clip
         '''
-        # TODO check what's going on with the audio tracks being out of sync.
+        # TODO:30 check what's going on with the audio tracks being out of sync.
         if not os.path.exists(self.path):
             # changed "ffmpeg" to mySettings.ffmpeg
             command = [mySettings.ffmpeg,
