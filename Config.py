@@ -53,9 +53,7 @@ class Settings(object):
                 check = True
                 while check:
                     ffmpeg = raw_input("Path to ffmpeg.exe (similar to this: /ffmpeg/bin): ")
-                    print ffmpeg
                     ffmpeg = self.check_path(ffmpeg)
-                    print ffmpeg
                     if os.path.isfile('{}/ffmpeg.exe'.format(ffmpeg)) is False:
                         print 'ffmpeg.exe was not found here.'
                     else:
