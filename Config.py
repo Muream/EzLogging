@@ -52,7 +52,7 @@ class Settings(object):
                 print ('If you do not have ffmpeg insalled: https://ffmpeg.org/download.html')
                 check = True
                 while check:
-                    ffmpeg = raw_input("Path of your ffmpeg (similar to this: installationFolder/ffmpeg/bin): ")
+                    ffmpeg = raw_input("Path to ffmpeg.exe (similar to this: /ffmpeg/bin): ")
                     print ffmpeg
                     ffmpeg = self.check_path(ffmpeg)
                     print ffmpeg
