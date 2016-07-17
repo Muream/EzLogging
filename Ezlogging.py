@@ -23,6 +23,7 @@ class TextFile(object):
         self.filename = ''
         self.filepath = ''
         self.startTime = 0
+        self.logCount = 0
 
     # Creates Time Logging file and starts a stopwatch in sync with the
     # recording software
@@ -54,14 +55,17 @@ class TextFile(object):
             # format.
             seconds = int(time.time() - self.startTime)
             currenttime = time.strftime('%H:%M:%S', time.gmtime(seconds))
+
             # Writes the time on a new line in the text file
             f = open(self.tempfile, 'a')
             f.write(currenttime + '\n')
             f.close()
-            print 'New entry : ' + currenttime
+
+            self.logCount += 1
+            print "Entry {0:0>2} : ".format(self.logCount)  + currenttime
+
         else:
-            print "You are not recording, press {} to start recording."\
-                .format(mySettings.startRecord)
+            print "You are not recording, press {} to start recording.".format(mySettings.startRecord)
 
     # Makes sure the file is closed when the recording stops and renames it to
     # the same name as the recording
@@ -73,15 +77,20 @@ class TextFile(object):
                 max(glob.iglob(mySettings.videoPath + '/*.' +
                                mySettings.videoFormat), key=os.path.getctime))
             newname = newestfile.split('.')[0] + '.txt'
+
             # Checks if there already is a file with this name to prevent
             # overwriting an existing file
             for f in os.listdir(mySettings.videoPath):
                 if f == newname:
                     newname = '{}_v2'.format(newname)
+
             # Renames the temporary text file
             os.rename(self.tempfile, mySettings.videoPath + '/' + newname)
             f = open(self.tempfile, 'a')
             f.close()
+
+            # reset the log Count
+            self.logCount = 0
             # Removes the temporary text file in case it still exists (Not sure
             # if needed, to lazy to test)
             try:

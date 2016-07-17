@@ -113,3 +113,7 @@ class Settings(object):
         self.startRecord = config['start record']
         self.stopRecord = config['stop record']
         self.logTime = config['log time']
+
+        print "Press {} to start recording".format(self.startRecord)
+        print "Press {} to log time".format(self.logTime)
+        print "Press {} to stop recording".format(self.stopRecord)
