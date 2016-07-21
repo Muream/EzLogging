@@ -9,27 +9,18 @@ Tools developped in order to ease the work on the youtube channel Proxy Ta Mere
 
 Installation
 ---
-Needs to be more accurate
+download and unzip this:
+https://www.dropbox.com/s/9pftzlz1m9jtdov/EzLogging.zip?dl=0
 
-I will try to make the installation process less of a pain in the ass in the  
-future but this is not a priority at the moment.
-
-First of all, you will need python 2.7 installed
-
-There are a few dependencies that needs to be installed:  
-
-For **EzLogging**:
-* Pyhk
-* Pyhook
-* Pywin32
-
-For **AutoLog**:
-* ffmpeg
+**you need ffmpeg for Autolog to work: https://ffmpeg.org/download.html**
 
 
 How to use
 ---
-First of all, launch the Config.py and follow the instructions
+
+there are 2 .exe files included, EzLogging.exe and AutoLog.exe
+start one of them to start the configuration and follow the instructions
+
 * The start record hotkey should be the same as the one in your recording software
 * The stop record hotkey should be the same as the one in your recording software
 * The log time hotkey can be anything you want
