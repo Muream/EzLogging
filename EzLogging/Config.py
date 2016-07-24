@@ -1,5 +1,6 @@
 import ConfigParser
 import os
+import utils
 
 # TODO: deal with dumb fucks who enter the wrong type of variable
 
@@ -16,12 +17,6 @@ class Settings(object):
         self.startRecord = None
         self.stopRecord = None
         self.logTime = None
-
-    def check_path(self, path):
-        path = path.replace('\\', '/')
-        if path[-1:] == '/':
-            path = path[:-1]
-        return path
 
     def set_config(self):
         cfg = ConfigParser.ConfigParser()
@@ -41,7 +36,7 @@ class Settings(object):
                 print "This is the first time you are using Config, you will need to set a few things up."
                 print "This is VERY IMPORTANT, otherwise nothing will work."
                 videoPath = raw_input("Path of your recordings: ")
-                videoPath = self.check_path(videoPath)
+                videoPath = utils.check_path(videoPath)
 
                 # format of the videos
                 videoformat = raw_input("Format of your recording (ex: mp4, avi, etc.): ")
@@ -52,7 +47,7 @@ class Settings(object):
                 check = True
                 while check:
                     ffmpeg = raw_input("Path to ffmpeg.exe (similar to this: /ffmpeg/bin): ")
-                    ffmpeg = self.check_path(ffmpeg)
+                    ffmpeg = utils.check_path(ffmpeg)
                     if os.path.isfile('{}/ffmpeg.exe'.format(ffmpeg)) is False:
                         print 'ffmpeg.exe was not found here.'
                     else:
