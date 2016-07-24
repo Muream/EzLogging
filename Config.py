@@ -25,7 +25,6 @@ class Settings(object):
 
     def set_config(self):
         cfg = ConfigParser.ConfigParser()
-        numberoftemp = 0
         try:
             # If the config file doesn't exist, create it and ask for the
             # user's configuration

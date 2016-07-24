@@ -8,8 +8,7 @@ mySettings = Settings()
 mySettings.set_config()
 mySettings.read_config()
 
-# TODO:0 : check why it exports some clips after they've been merged to
-# other ones
+# TODO: check why it exports some clips after they've been merged to other ones
 
 
 class Clip:
@@ -33,7 +32,6 @@ class Clip:
         second = int(self.timing[6:8])
         hour = hour * 60 * 60
         minute = minute * 60
-        timingSeconds = second
         self.timingSeconds = hour + minute + second
 
     def get_range(self):
@@ -79,7 +77,8 @@ class Clip:
         '''
         Exports the clip
         '''
-        # TODO:30 check what's going on with the audio tracks being out of sync.
+        # TODO:30 check what's going on with the audio tracks being out of
+        # sync.
         if not os.path.exists(self.path):
             # changed "ffmpeg" to mySettings.ffmpeg
             command = [mySettings.ffmpeg,
