@@ -8,6 +8,8 @@ https://www.dropbox.com/s/9pftzlz1m9jtdov/EzLogging.zip?dl=0
 
 **you need ffmpeg for Autolog to work: https://ffmpeg.org/download.html**
 
+If for some reason you want to use it from the source code, you will need to install pyhooked: 
+https://github.com/ethanhs/pyhooked
 
 How to use
 ---
