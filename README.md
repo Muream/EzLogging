@@ -4,7 +4,7 @@ EzLogging
 Installation
 ---
 download and unzip this:
-https://www.dropbox.com/s/9pftzlz1m9jtdov/EzLogging.zip?dl=0
+https://github.com/muream/EzLogging/releases
 
 **you need ffmpeg for Autolog to work: https://ffmpeg.org/download.html**
 
