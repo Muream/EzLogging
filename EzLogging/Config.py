@@ -1,7 +1,7 @@
 import ConfigParser
 import os
 
-# TODO:40 deal with dumb fucks who enter the wrong type of variable
+# TODO: deal with dumb fucks who enter the wrong type of variable
 
 
 class Settings(object):

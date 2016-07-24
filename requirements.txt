@@ -1,0 +1,2 @@
+PySide==1.2.4
+git+https://github.com/IronManMark20/hooked.git

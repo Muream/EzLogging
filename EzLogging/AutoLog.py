@@ -35,7 +35,6 @@ class Clip:
         self.timingSeconds = hour + minute + second
 
     def get_range(self):
-        # #DONE:0 Make sure the range of the clip is the right one
         '''
         Gets the range of the clip
         '''
@@ -77,8 +76,7 @@ class Clip:
         '''
         Exports the clip
         '''
-        # TODO:30 check what's going on with the audio tracks being out of
-        # sync.
+        # TODO: check what's going on with the audio tracks being out of sync.
         if not os.path.exists(self.path):
             # changed "ffmpeg" to mySettings.ffmpeg
             command = [mySettings.ffmpeg,
@@ -108,7 +106,7 @@ class Clip:
 
 def sort_files(fileToSort, destination):
     '''
-    simply moves file to said destination
+    Moves file to said destination.
     :param fileToSort: Path to the file
     :param destination: where you want the file to be moved.
     '''
@@ -121,7 +119,7 @@ def sort_files(fileToSort, destination):
 
 def get_timings(textFile, videoFile):
     '''
-    Puts the content of a textfile in a list
+    Puts the content of a textfile in a list.
     :param textFile: path to the text file
     :param videoFile: path to the videoFile
     :return: list of all the timings
