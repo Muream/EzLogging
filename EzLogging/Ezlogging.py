@@ -8,9 +8,6 @@ from pyhooked import hook
 
 # TODO: reorganize the shit out of it
 
-mySettings = Settings()
-mySettings.set_config()
-mySettings.read_config()
 
 
 class TextFile(object):
@@ -114,6 +111,12 @@ class TextFile(object):
 
 # using pyhooked ---> CAN press multiple keys at once
 def main():
+
+
+    mySettings = Settings()
+    mySettings.set_config()
+    mySettings.read_config()
+
     hk = hook()
     f = TextFile()
     hk.Hotkey([mySettings.startRecord], f.createfile)
@@ -121,5 +124,5 @@ def main():
     hk.Hotkey([mySettings.stopRecord], f.closefile)
     hk.listen()
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

@@ -1,5 +1,6 @@
 import sys
 import PySide.QtGui as _qt
+import Ezlogging
 
 
 class EzLoggingUI(_qt.QMainWindow):
@@ -15,6 +16,7 @@ class EzLoggingUI(_qt.QMainWindow):
         """
         """
         self._createMenus()
+        self._createCentralWidget()
 
     def _createMenus(self):
         """
@@ -37,16 +39,23 @@ class EzLoggingUI(_qt.QMainWindow):
         self.setCentralWidget(_qt.QWidget())
         self.centralWidget().setLayout(_qt.QVBoxLayout())
 
-        self._createLogs()
+        self._createLogOutput()
 
-    def _createLogs(self):
+    def _createLogOutput(self):
         """
         """
+        self._logOutputLayout = _qt.QHBoxLayout()
+        logOutput = _qt.QTextEdit()
+        logOutput.setReadOnly(True)
+        logOutput.setLineWrapMode(_qt.QTextEdit.NoWrap)
 
-    def createLogsWidget(self):
-        """
-        """
-        self.QPlainTextEdit().setReadOnly(True)
+        font = logOutput.font()
+        font.setFamily("Verdana")
+        font.setPointSize(10)
+
+        self._logOutputLayout.addWidget(logOutput)
+
+        self.centralWidget().layout().addLayout(self._logOutputLayout)
 
 
 def show():
@@ -55,6 +64,8 @@ def show():
 
     ui = EzLoggingUI()
     ui.show()
+
+    Ezlogging.main()
 
     app.exec_()
     sys.exit()
