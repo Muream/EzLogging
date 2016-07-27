@@ -1,14 +1,15 @@
-# import pyhk
+import pyhk
 import time
 import os.path
 import glob
 from Config import Settings
-from pyhooked import hook
-
+# from pyhooked import hook
 
 # TODO: reorganize the shit out of it
 
-
+mySettings = Settings()
+mySettings.set_config()
+mySettings.read_config()
 
 class TextFile(object):
 
@@ -19,6 +20,10 @@ class TextFile(object):
         self.filepath = ''
         self.startTime = 0
         self.logCount = 0
+
+        # mySettings = Settings()
+        # mySettings.set_config()
+        # mySettings.read_config()
 
     # Creates Time Logging file and starts a stopwatch in sync with the recording software
     def createfile(self):
@@ -101,28 +106,27 @@ class TextFile(object):
 
 
 # Using Pyhk ---> can't press multiple keys at once
-# def main():
-#     hot = pyhk.pyhk()
-#     f = TextFile()
-#     hot.addHotkey([mySettings.startRecord], f.createfile)
-#     hot.addHotkey([mySettings.logTime], f.writetime)
-#     hot.addHotkey([mySettings.stopRecord], f.closefile)
-#     hot.start()
+def main():
+    # mySettings = Settings()
+    # mySettings.set_config()
+    # mySettings.read_config()
+
+    hot = pyhk.pyhk()
+    f = TextFile()
+    hot.addHotkey([mySettings.startRecord], f.createfile)
+    hot.addHotkey([mySettings.logTime], f.writetime)
+    hot.addHotkey([mySettings.stopRecord], f.closefile)
+    hot.start()
 
 # using pyhooked ---> CAN press multiple keys at once
-def main():
+# def main():
+#
+#     hk = hook()
+#     f = TextFile()
+#     hk.Hotkey([mySettings.startRecord], f.createfile)
+#     hk.Hotkey([mySettings.logTime], f.writetime)
+#     hk.Hotkey([mySettings.stopRecord], f.closefile)
+#     hk.listen()
 
-
-    mySettings = Settings()
-    mySettings.set_config()
-    mySettings.read_config()
-
-    hk = hook()
-    f = TextFile()
-    hk.Hotkey([mySettings.startRecord], f.createfile)
-    hk.Hotkey([mySettings.logTime], f.writetime)
-    hk.Hotkey([mySettings.stopRecord], f.closefile)
-    hk.listen()
-
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    main()
