@@ -86,10 +86,13 @@ class Clip:
                        "-map", "0:2",
                        "-map", "0:3",
                        "-map", "0:4",
+                       "-vcodec", "dnxhd",
+                       "-b", "145M",
+                       "-acodec", "aac",
+                       "-f", "mov",
                        "-ss", "%0.2f" % self.start,
                        "-t", "%0.2f" % self.length,
-                       "-codec", "copy",
-                       self.path]
+                       "{}mov".format(self.path[:-3])]
             FNULL = open(os.devnull, 'w')
             p = sp.Popen(command,
                          # shell=True,
@@ -166,8 +169,7 @@ def main():
     if not os.path.exists(processedPath):
         os.makedirs(processedPath)
 
-    # checks if there's an associated textfile with the video, if not, move the
-    # video elsewhere
+    # checks if there's an associated textfile with the video, if not, move the video elsewhere
     videoFiles = glob.glob(
         "{}/*.{}".format(mySettings.videoPath, mySettings.videoFormat))
     for videoFile in videoFiles:
@@ -204,8 +206,8 @@ def main():
 
                 if shouldMerge is True:
                     clip.merge_clips(nextClip.end, timings, currentIndex + 1)
-                    # goes back from one index since merge_clips deletes one
-                    # item from the list
+                    # goes back from one index since merge_clips deletes one item from the list
+                    currentIndex -= 1
                 else:
                     break
                 currentIndex = currentIndex + 1
