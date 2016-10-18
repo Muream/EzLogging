@@ -3,13 +3,14 @@ import time
 import os.path
 import glob
 from Config import Settings
-from pyhooked import hook
+from pyhooked import Hook, KeyboardEvent
 
 # TODO: reorganize the shit out of it
 
 mySettings = Settings()
 mySettings.set_config()
 mySettings.read_config()
+
 
 class TextFile(object):
 
@@ -21,12 +22,8 @@ class TextFile(object):
         self.startTime = 0
         self.logCount = 0
 
-        # mySettings = Settings()
-        # mySettings.set_config()
-        # mySettings.read_config()
-
-    # Creates Time Logging file and starts a stopwatch in sync with the recording software
     def createfile(self):
+        """Creates Time Logging file and starts a stopwatch."""
         # If we ARE NOT recording
         if self.state == 0:
             # Stores the time of the beginning of the recording
@@ -39,16 +36,14 @@ class TextFile(object):
             print '\n\n---------'
             print '\nRecording...'
             print 'A temporary file has been created, do not delete it.\n'
-            print 'IMPORTANT: Do not press {} until your recording software'\
-                'created the video file (a few seconds at most).\n'\
-                .format(mySettings.stopRecord)
+            print 'IMPORTANT: Do not press {} until your recording software created the video file (a few seconds at most).\n'.format(mySettings.stopRecord)
             # Switches to a Recording state
             self.state = 1
         else:
             print "File already open."
 
-    # Logs the current recording time
     def writetime(self):
+        """Logs the current recording time."""
         if self.state == 1:  # If we ARE recording
             # Substracts the currentTime to the startTime to get the elapsed
             # time since the start of the recording. Converts it to a hh:mm:ss
@@ -67,12 +62,13 @@ class TextFile(object):
         else:
             print "You are not recording, press {} to start recording.".format(mySettings.startRecord)
 
-    # Makes sure the file is closed when the recording stops and renames it to
-    # the same name as the recording
     def closefile(self):
+        """
+        Makes sure the file is closed when the recording stops and renames it to
+        the same name as the recording.
+        """
         if self.state == 1:  # If we ARE recording
-            # Gets the name of the latest video file of the directory in order
-            # to rename the temporary text file with the same name
+            # Gets the name of the latest video file of the directory in order to rename the temporary text file with the same name
             newestfile = os.path.basename(
                 max(glob.iglob(mySettings.videoPath + '/*.' +
                                mySettings.videoFormat), key=os.path.getctime))
@@ -91,8 +87,7 @@ class TextFile(object):
 
             # reset the log Count
             self.logCount = 0
-            # Removes the temporary text file in case it still exists (Not sure
-            # if needed, to lazy to test)
+            # Removes the temporary text file in case it still exists (Not sure if needed, to lazy to test)
             try:
                 os.remove(self.tempfile)
             except OSError as e:  # name the Exception `e`
@@ -101,32 +96,25 @@ class TextFile(object):
             self.state = 0
 
         else:
-            print "You are not recording, press {} to start recording."\
-                .format(mySettings.startRecord)
+            print "You are not recording, press {} to start recording.".format(mySettings.startRecord)
+
+    def handle_events(self, args):
+        if isinstance(args, KeyboardEvent):
+            if args.current_key == mySettings.startRecord and args.event_type == 'key down':
+
+                self.createfile()
+            if args.current_key == mySettings.logTime and args.event_type == 'key down':
+                self.writetime()
+            if args.current_key == mySettings.stopRecord and args.event_type == 'key down':
+                self.closefile()
 
 
-# # Using Pyhk ---> can't press multiple keys at once
-# def main():
-#     # mySettings = Settings()
-#     # mySettings.set_config()
-#     # mySettings.read_config()
-#
-#     hot = pyhk.pyhk()
-#     f = TextFile()
-#     hot.addHotkey([mySettings.startRecord], f.createfile)
-#     hot.addHotkey([mySettings.logTime], f.writetime)
-#     hot.addHotkey([mySettings.stopRecord], f.closefile)
-#     hot.start()
-
-# using pyhooked ---> CAN press multiple keys at once
 def main():
-
-    hk = hook()
     f = TextFile()
-    hk.Hotkey([mySettings.startRecord], f.createfile)
-    hk.Hotkey([mySettings.logTime], f.writetime)
-    hk.Hotkey([mySettings.stopRecord], f.closefile)
-    hk.listen()
+    hk = Hook()
+    hk = Hook()
+    hk.handler = f.handle_events
+    hk.hook()
 
 if __name__ == '__main__':
     main()
