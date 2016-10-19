@@ -18,6 +18,9 @@ class Settings(object):
         self.stopRecord = None
         self.logTime = None
 
+        self.set_config()
+        self.read_config()
+
     def set_config(self):
         cfg = ConfigParser.ConfigParser()
         try:
