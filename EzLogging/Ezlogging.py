@@ -1,15 +1,12 @@
 import time
 import os.path
 import glob
-from Config import Settings
 from pyhooked import Hook, KeyboardEvent
-
-# TODO: reorganize the shit out of it
 
 
 class TextFile(object):
 
-    def __init__(self):
+    def __init__(self, settings):
         self.state = 0
         self.tempfile = ''
         self.filename = ''
@@ -17,7 +14,7 @@ class TextFile(object):
         self.startTime = 0
         self.logCount = 0
 
-        self.settings = Settings()
+        self.settings = settings
 
     def createfile(self, ui):
         """Creates Time Logging file and starts a stopwatch."""
@@ -34,15 +31,10 @@ class TextFile(object):
             ui.logOutput.append('A temporary file has been created, do not delete it.')
             ui.logOutput.append('IMPORTANT: Do not press {} until your recording software created the video file (a few seconds at most).\n'.format(self.settings.stopRecord))
 
-            print '\n\n---------'
-            print '\nRecording...'
-            print 'A temporary file has been created, do not delete it.\n'
-            print 'IMPORTANT: Do not press {} until your recording software created the video file (a few seconds at most).\n'.format(self.settings.stopRecord)
             # Switches to a Recording state
             self.state = 1
         else:
             ui.logOutput.append('File already open.')
-            print "File already open."
 
     def writetime(self, ui):
         """Logs the current recording time."""
@@ -61,12 +53,8 @@ class TextFile(object):
             self.logCount += 1
             ui.logOutput.append("Entry {0:0>2} : ".format(self.logCount) + currenttime)
 
-            print "Entry {0:0>2} : ".format(self.logCount) + currenttime
-
         else:
             ui.logOutput.append("You are not recording, press {} to start recording.".format(self.settings.startRecord))
-
-            print "You are not recording, press {} to start recording.".format(self.settings.startRecord)
 
     def closefile(self, ui):
         """
@@ -98,24 +86,12 @@ class TextFile(object):
                 os.remove(self.tempfile)
             except OSError as e:  # name the Exception `e`
                 ui.logOutput.append("Failed with:", e.strerror)
-                print "Failed with:", e.strerror  # look what it says
 
             ui.logOutput.append("\nRecording is over.\n")
-            print "\nRecording is over.\n"
             self.state = 0
 
         else:
-            print "You are not recording, press {} to start recording.".format(self.settings.startRecord)
-
-    def handle_events(self, args):
-        if isinstance(args, KeyboardEvent):
-            if args.current_key == self.settings.startRecord and args.event_type == 'key down':
-
-                self.createfile()
-            if args.current_key == self.settings.logTime and args.event_type == 'key down':
-                self.writetime()
-            if args.current_key == self.settings.stopRecord and args.event_type == 'key down':
-                self.closefile()
+            ui.logOutput.append("You are not recording, press {} to start recording.".format(self.settings.startRecord))
 
 
 def main():

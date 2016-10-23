@@ -1,9 +1,13 @@
 import sys
-import PySide.QtGui as QtGui
-import Ezlogging
 import threading
+import os
+
 from pyhooked import Hook, KeyboardEvent
+import PySide.QtGui as QtGui
+
+import Ezlogging
 from Config import Settings
+import settingsDialog
 
 
 class EzLoggingUI(QtGui.QMainWindow):
@@ -13,6 +17,15 @@ class EzLoggingUI(QtGui.QMainWindow):
         super(EzLoggingUI, self).__init__(*args)
 
         self.settings = Settings()
+
+        if os.path.isfile('Config.cfg'):
+            self.settings.read_config()
+        else:
+            self.launch_settings_dialog()
+
+        self.setup_ui()
+
+    def setup_ui(self):
 
         self.setWindowTitle('EzLogging')
         self.setMinimumSize(500, 500)
@@ -55,15 +68,15 @@ class EzLoggingUI(QtGui.QMainWindow):
         self.labelsFont = QtGui.QFont()
         self.labelsFont.setPointSize(10)
 
-        self.startRecordLabel = QtGui.QLabel("Start record : {}".format(self.settings.startRecord))
+        self.startRecordLabel = QtGui.QLabel("Start recording : {}".format(str(self.settings.startRecord)))
         self.startRecordLabel.setFont(self.labelsFont)
         self.settingsInfoLayout.addWidget(self.startRecordLabel)
 
-        self.logTimeLabel = QtGui.QLabel("Log Time : {}".format(self.settings.logTime))
+        self.logTimeLabel = QtGui.QLabel("Log Time : {}".format(str(self.settings.logTime)))
         self.logTimeLabel.setFont(self.labelsFont)
         self.settingsInfoLayout.addWidget(self.logTimeLabel)
 
-        self.stopRecordLabel = QtGui.QLabel("Stop record : {}".format(self.settings.stopRecord))
+        self.stopRecordLabel = QtGui.QLabel("Stop recording : {}".format(str(self.settings.stopRecord)))
         self.stopRecordLabel.setFont(self.labelsFont)
         self.settingsInfoLayout.addWidget(self.stopRecordLabel)
 
@@ -87,7 +100,7 @@ class EzLoggingUI(QtGui.QMainWindow):
         self.centralWidget().layout().addLayout(self.logOutputLayout)
 
     def launch_settings_dialog(self):
-        self.settingsDialog = SettingsDialog()
+        self.settingsDialog = settingsDialog.SettingsDialog(self.settings, self)
         self.settingsDialog.show()
 
     def handle_events(self, args):
@@ -103,122 +116,18 @@ class EzLoggingUI(QtGui.QMainWindow):
 
     def hotkeys(self):
         """Global hotkeys setup."""
-        self.f = Ezlogging.TextFile()
+        self.f = Ezlogging.TextFile(self.settings)
         hk = Hook()
         hk.handler = self.handle_events
         thread = threading.Thread(target=hk.hook)
         thread.start()
 
+    def update_ui(self):
+        self.startRecordLabel.setText("Start recording : {}".format(str(self.settings.startRecord)))
 
-class SettingsDialog(QtGui.QDialog):
+        self.logTimeLabel.setText("Log Time : {}".format(str(self.settings.logTime)))
 
-    def __init__(self, *args):
-        super(SettingsDialog, self).__init__(*args)
-        self.settings = Settings()
-        self.setupUI()
-
-    def setupUI(self):
-
-        self.setWindowTitle('Settings')
-        self.setMinimumSize(480, 300)
-        self.setMaximumSize(480, 300)
-
-        self.setModal(True)
-
-        self.mainLayout = QtGui.QHBoxLayout()
-        self.setLayout(self.mainLayout)
-
-        self.settings_layout()
-
-    def settings_layout(self):
-        self.settingsLayout = QtGui.QVBoxLayout()
-        self.mainLayout.addLayout(self.settingsLayout)
-
-        self.video_path_layout()
-        self.videoFormat_layout()
-        self.hotkeys_layout()
-        self.ffmpeg_path_layout()
-
-    def video_path_layout(self):
-        self.videoPathLayout = QtGui.QHBoxLayout()
-        self.settingsLayout.addLayout(self.videoPathLayout)
-
-        self.videoPathLabel = QtGui.QLabel('Recordings Location')
-        self.videoPathLayout.addWidget(self.videoPathLabel)
-
-        self.videoPathLineEdit = QtGui.QLineEdit()
-        self.videoPathLineEdit.setText(self.settings.videoPath)
-        self.videoPathLayout.addWidget(self.videoPathLineEdit)
-
-        self.videoPathBrowseButton = QtGui.QPushButton('Browse')
-        self.videoPathBrowseButton.released.connect(self.browse_videos)
-        self.videoPathLayout.addWidget(self.videoPathBrowseButton)
-
-    def videoFormat_layout(self):
-        self.videoFormatLayout = QtGui.QHBoxLayout()
-        self.settingsLayout.addLayout(self.videoFormatLayout)
-
-        self.videoPathLabel = QtGui.QLabel('Recordings Format')
-        self.videoFormatLayout.addWidget(self.videoPathLabel)
-
-        self.videoFormatComboBox = QtGui.QComboBox()
-        self.videoFormatComboBox.addItem("mp4")
-        self.videoFormatComboBox.addItem("mov")
-        self.videoFormatComboBox.addItem("mkv")
-        self.videoFormatComboBox.addItem("flv")
-        index = self.videoFormatComboBox.findText(self.settings.videoFormat)
-        self.videoFormatComboBox.setCurrentIndex(index)
-        self.videoFormatLayout.addWidget(self.videoFormatComboBox)
-
-    def hotkeys_layout(self):
-        self.hotkeysLayout = QtGui.QHBoxLayout()
-        self.settingsLayout.addLayout(self.hotkeysLayout)
-
-        self.startRecordLabel = QtGui.QLabel('Start Recording')
-        self.hotkeysLayout.addWidget(self.startRecordLabel)
-
-        self.startRecordButton = QtGui.QPushButton(self.settings.startRecord)
-        self.hotkeysLayout.addWidget(self.startRecordButton)
-
-        self.startRecordLabel = QtGui.QLabel('Log Time')
-        self.hotkeysLayout.addWidget(self.startRecordLabel)
-        self.logTimeButton = QtGui.QPushButton(self.settings.logTime)
-        self.hotkeysLayout.addWidget(self.logTimeButton)
-
-        self.startRecordLabel = QtGui.QLabel('Stop Recording')
-        self.hotkeysLayout.addWidget(self.startRecordLabel)
-        self.stopRecordButton = QtGui.QPushButton(self.settings.stopRecord)
-        self.hotkeysLayout.addWidget(self.stopRecordButton)
-
-    def ffmpeg_path_layout(self):
-        self.ffmpegPathLayout = QtGui.QHBoxLayout()
-        self.settingsLayout.addLayout(self.ffmpegPathLayout)
-
-        self.ffmpegPathLabel = QtGui.QLabel('FFMPEG Location')
-        self.ffmpegPathLayout.addWidget(self.ffmpegPathLabel)
-
-        self.ffmpegPathLineEdit = QtGui.QLineEdit()
-        self.ffmpegPathLineEdit.setText(self.settings.ffmpeg)
-        self.ffmpegPathLayout.addWidget(self.ffmpegPathLineEdit)
-
-        self.ffmpegPathBrowseButton = QtGui.QPushButton('Browse')
-        self.ffmpegPathBrowseButton.released.connect(self.browse_ffmpeg)
-        self.ffmpegPathLayout.addWidget(self.ffmpegPathBrowseButton)
-
-    def browse_videos(self):
-        self.browseVideosFileDialog = QtGui.QFileDialog()
-        self.browseVideosFileDialog.setModal(True)
-        directory = self.browseVideosFileDialog.getExistingDirectory()
-        self.videoPathLineEdit.setText(directory)
-
-    def browse_ffmpeg(self):
-        self.browseFfmpegFileDialog = QtGui.QFileDialog()
-        self.browseFfmpegFileDialog.setModal(True)
-        self.browseFfmpegFileDialog.setFileMode(QtGui.QFileDialog.ExistingFile)
-        self.browseFfmpegFileDialog.setFilter("Executable (*.exe)")
-        self.browseFfmpegFileDialog.exec_()
-        filename = self.browseFfmpegFileDialog.selectedFiles()[0]
-        self.ffmpegPathLineEdit.setText(filename)
+        self.stopRecordLabel.setText("Stop recording : {}".format(str(self.settings.stopRecord)))
 
 
 def show():
