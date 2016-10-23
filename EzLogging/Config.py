@@ -11,8 +11,8 @@ class Settings(object):
                  videoPath=None,
                  videoFormat=None,
                  ffmpeg=None,
-                 cutBefore=None,
-                 cutAfter=None,
+                 cutBefore=0,
+                 cutAfter=0,
                  startRecord=None,
                  stopRecord=None,
                  logTime=None):

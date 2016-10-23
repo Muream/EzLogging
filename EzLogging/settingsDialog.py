@@ -112,17 +112,17 @@ class SettingsDialog(QtGui.QDialog):
 
         self.trimBeforeLabel = QtGui.QLabel("Time before timecode (s)")
         self.trimSettingsLayout.addWidget(self.trimBeforeLabel)
+
         self.trimBeforeSpinBox = QtGui.QSpinBox()
         self.trimBeforeSpinBox.setMinimum(0)
-
         self.trimBeforeSpinBox.setValue(self.settings.cutBefore)
         self.trimSettingsLayout.addWidget(self.trimBeforeSpinBox)
 
         self.trimAfterLabel = QtGui.QLabel("Time after timecode (s)")
         self.trimSettingsLayout.addWidget(self.trimAfterLabel)
+
         self.trimAfterSpinBox = QtGui.QSpinBox()
         self.trimAfterSpinBox.setMinimum(0)
-
         self.trimAfterSpinBox.setValue(self.settings.cutAfter)
         self.trimSettingsLayout.addWidget(self.trimAfterSpinBox)
 

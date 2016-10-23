@@ -123,6 +123,7 @@ class EzLoggingUI(QtGui.QMainWindow):
         thread.start()
 
     def update_ui(self):
+        self.settings.read_config()
         self.startRecordLabel.setText("Start recording : {}".format(str(self.settings.startRecord)))
 
         self.logTimeLabel.setText("Log Time : {}".format(str(self.settings.logTime)))
