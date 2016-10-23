@@ -1,0 +1,2 @@
+pyhooked==0.8.1
+PySide==1.2.4
