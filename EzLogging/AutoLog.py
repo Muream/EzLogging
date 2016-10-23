@@ -3,18 +3,15 @@ import os
 import glob
 from Config import Settings
 
-
-mySettings = Settings()
-mySettings.set_config()
-mySettings.read_config()
-
 # TODO: check why it exports some clips after they've been merged to other ones
 
 
 class Clip:
 
-    def __init__(self, timing, originalFile):
+    def __init__(self, settings,ui, timing, originalFile):
 
+        self.settings = settings
+        self.ui = ui
         self.timing = timing
         self.path = None
         self.originalFile = originalFile
@@ -38,10 +35,10 @@ class Clip:
         '''
         Gets the range of the clip
         '''
-        self.start = self.timingSeconds - mySettings.cutBefore
+        self.start = self.timingSeconds - self.settings.cutBefore
         if self.start < 0:
             self.start = 0
-        self.end = self.timingSeconds + mySettings.cutAfter
+        self.end = self.timingSeconds + self.settings.cutAfter
         self.length = self.end - self.start
 
     def should_merge(self, nextStart):
@@ -64,13 +61,12 @@ class Clip:
         del timingsList[nextIndex]
 
     def print_infos(self):
-        print "Clip infos:"
-        print "Timing: {}".format(self.timing)
-        print "start: {}".format(seconds_to_timing(self.start))
-        print "end: {}".format(seconds_to_timing(self.end))
-        print "length: {}s".format(self.length)
-        print "path : {}".format(self.path)
-        print
+        self.ui.logOutput.append("Clip infos:")
+        self.ui.logOutput.append("Timing: {}".format(self.timing))
+        self.ui.logOutput.append("start: {}".format(seconds_to_timing(self.start)))
+        self.ui.logOutput.append("end: {}".format(seconds_to_timing(self.end)))
+        self.ui.logOutput.append("length: {}s".format(self.length))
+        self.ui.logOutput.append("path : {}".format(self.path))
 
     def export_clip(self):
         '''
@@ -78,8 +74,8 @@ class Clip:
         '''
         # TODO: check what's going on with the audio tracks being out of sync.
         if not os.path.exists(self.path):
-            # changed "ffmpeg" to mySettings.ffmpeg
-            command = [mySettings.ffmpeg,
+            # changed "ffmpeg" to settings.ffmpeg
+            command = [self.settings.ffmpeg,
                        "-i", self.originalFile,
                        "-map", "0:0",
                        "-map", "0:1",
@@ -102,9 +98,11 @@ class Clip:
                          )
             # output = p.communicate('S\nL\n')[0]
             output, error = p.communicate()
-            # print output
+            # self.ui.logOutput.append(output)
         else:
-            print "Clip already logged delete it if you want to log it again."
+            self.ui.logOutput.append("Clip already logged delete it if you want to log it again.")
+
+
 
 
 def sort_files(fileToSort, destination):
@@ -157,35 +155,35 @@ def seconds_to_timing(seconds):
     return "{0:0>2}".format(h) + ":{0:0>2}".format(m) + ":{0:0>2}".format(s)
 
 
-def main():
+def main(settings, ui):
 
     # Creates the "Clips" Folder
-    exportPath = mySettings.videoPath + "/Clips"
+    exportPath = settings.videoPath + "/Clips"
     if not os.path.exists(exportPath):
         os.makedirs(exportPath)
 
     # Creates the "Processed" Folder
-    processedPath = mySettings.videoPath + "/Processed"
+    processedPath = settings.videoPath + "/Processed"
     if not os.path.exists(processedPath):
         os.makedirs(processedPath)
 
     # checks if there's an associated textfile with the video, if not, move the video elsewhere
     videoFiles = glob.glob(
-        "{}/*.{}".format(mySettings.videoPath, mySettings.videoFormat))
+        "{}/*.{}".format(settings.videoPath, settings.videoFormat))
     for videoFile in videoFiles:
         name = os.path.basename(videoFile.rsplit('.', 1)[0])
-        textFile = "{}/{}.txt".format(mySettings.videoPath, name)
+        textFile = "{}/{}.txt".format(settings.videoPath, name)
         textFileExists = textFile_exists(textFile)
         if textFileExists is False:
-            noTextFile = "{}/NoTextFile".format(mySettings.videoPath)
+            noTextFile = "{}/NoTextFile".format(settings.videoPath)
             sort_files(videoFile, noTextFile)
     # Loops through all the remaining videos in said folder
     videoFiles = glob.glob(
-        "{}/*.{}".format(mySettings.videoPath, mySettings.videoFormat))
+        "{}/*.{}".format(settings.videoPath, settings.videoFormat))
     for videoFile in videoFiles:
 
         name = os.path.basename(videoFile.rsplit('.', 1)[0])
-        textFile = "{}/{}.txt".format(mySettings.videoPath, name)
+        textFile = "{}/{}.txt".format(settings.videoPath, name)
         timings = get_timings(textFile, videoFile)
         mergedClips = []
 
@@ -193,13 +191,13 @@ def main():
         for timing in timings:
 
             currentIndex = timings.index(timing)
-            clip = Clip(timing, videoFile)
+            clip = Clip(settings, ui, timing, videoFile)
             clip.timing_to_seconds()
             clip.get_range()
 
             while True and currentIndex + 1 < len(timings):
                 nextTiming = timings[currentIndex + 1]
-                nextClip = Clip(nextTiming, videoFile)
+                nextClip = Clip(settings, ui, nextTiming, videoFile)
                 nextClip.timing_to_seconds()
                 nextClip.get_range()
                 shouldMerge = clip.should_merge(nextClip.start)
@@ -221,17 +219,17 @@ def main():
             # Probably not the cleanest way to do this :
             clip.path = "{}/{}_Clip_".format(exportPath, name) + \
                 "{0:0>3}".format(clipIndex + 1) + ".{}" \
-                .format(mySettings.videoFormat)
-            print "\n--------------\n"
-            print "Video {}/{}\n".format(videoIndex + 1, len(videoFiles))
-            print "Name: {}\n".format(name)
-            print "Clip {}/{}".format(clipIndex + 1, len(mergedClips))
+                .format(settings.videoFormat)
+            ui.logOutput.append("\n--------------\n")
+            ui.logOutput.append("Video {}/{}\n".format(videoIndex + 1, len(videoFiles)))
+            ui.logOutput.append("Name: {}\n".format(name))
+            ui.logOutput.append("Clip {}/{}".format(clipIndex + 1, len(mergedClips)))
             clip.print_infos()
             clip.export_clip()
 
         sort_files(videoFile, processedPath)
         sort_files(textFile, processedPath)
-        print "File moved to the Processd folder"
+        ui.logOutput.append("File moved to the Processd folder")
 
 
 if __name__ == '__main__':

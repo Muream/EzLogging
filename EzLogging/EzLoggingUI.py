@@ -6,6 +6,7 @@ from pyhooked import Hook, KeyboardEvent
 import PySide.QtGui as QtGui
 
 import Ezlogging
+import AutoLog
 from Config import Settings
 import settingsDialog
 
@@ -47,6 +48,7 @@ class EzLoggingUI(QtGui.QMainWindow):
         self.menuBar = self.menuBar()
         self.fileMenu = self.menuBar.addMenu('&File')
         self.create_settings_menu_actions()
+        self.create_autoLog_menu_actions()
 
     def create_settings_menu_actions(self):
         """
@@ -55,6 +57,14 @@ class EzLoggingUI(QtGui.QMainWindow):
         self.settingsAction.triggered.connect(self.launch_settings_dialog)
 
         self.fileMenu.addAction(self.settingsAction)
+
+    def create_autoLog_menu_actions(self):
+        """
+        """
+        self.autoLogAction = QtGui.QAction('&AutoLog', self)
+        self.autoLogAction.triggered.connect(self.start_autolog)
+
+        self.fileMenu.addAction(self.autoLogAction)
 
     def create_central_widget(self):
         """
@@ -102,6 +112,11 @@ class EzLoggingUI(QtGui.QMainWindow):
     def launch_settings_dialog(self):
         self.settingsDialog = settingsDialog.SettingsDialog(self.settings, self)
         self.settingsDialog.show()
+
+    def start_autolog(self):
+        thread = threading.Thread(target=AutoLog.main, args=(self.settings, self))
+        thread.start()
+
 
     def handle_events(self, args):
         """Global hotkeys actions"""
