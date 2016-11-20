@@ -1,7 +1,7 @@
 import time
 import os.path
 import glob
-from pyhooked import Hook, KeyboardEvent
+import utils
 
 
 class TextFile(object):
@@ -61,12 +61,13 @@ class TextFile(object):
         Makes sure the file is closed when the recording stops and renames it to
         the same name as the recording.
         """
+
         if self.state == 1:  # If we ARE recording
             # Gets the name of the latest video file of the directory in order to rename the temporary text file with the same name
             newestfile = os.path.basename(
                 max(glob.iglob(self.settings.videoPath + '/*.' +
                                self.settings.videoFormat), key=os.path.getctime))
-            newname = newestfile.split('.')[0] + '.txt'
+            newname = utils.convert_string(ui.currentGame) + "_" + newestfile.split('.')[0] + '.txt'
 
             # Checks if there already is a file with this name to prevent
             # overwriting an existing file
@@ -92,13 +93,3 @@ class TextFile(object):
 
         else:
             ui.logOutput.append("You are not recording, press {} to start recording.".format(self.settings.startRecord))
-
-
-def main():
-    f = TextFile()
-    hk = Hook()
-    hk.handler = f.handle_events
-    hk.hook()
-
-if __name__ == '__main__':
-    main()
