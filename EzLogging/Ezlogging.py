@@ -36,6 +36,8 @@ class TextFile(object):
         else:
             ui.logOutput.append('File already open.')
 
+        return
+
     def writetime(self, ui):
         """Logs the current recording time."""
         if self.state == 1:  # If we ARE recording
@@ -56,32 +58,44 @@ class TextFile(object):
         else:
             ui.logOutput.append("You are not recording, press {} to start recording.".format(self.settings.startRecord))
 
+        return
+
     def closefile(self, ui):
         """
         Makes sure the file is closed when the recording stops and renames it to
         the same name as the recording.
         """
-
         if self.state == 1:  # If we ARE recording
-            # Gets the name of the latest video file of the directory in order to rename the temporary text file with the same name
-            newestfile = os.path.basename(
-                max(glob.iglob(self.settings.videoPath + '/*.' +
-                               self.settings.videoFormat), key=os.path.getctime))
-            newname = utils.convert_string(ui.currentGame) + "_" + newestfile.split('.')[0] + '.txt'
 
-            # Checks if there already is a file with this name to prevent
-            # overwriting an existing file
+            # Gets the name of the latest video file of the directory in order to rename the temporary text file with the same name
+            newestfile = os.path.basename(max(glob.iglob(self.settings.videoPath + '/*.' + self.settings.videoFormat),
+                                              key=os.path.getctime))
+            newName = utils.convert_string(ui.currentGame) + "_" + newestfile.split('.')[0] + '.txt'
+            newVideoName = utils.convert_string(ui.currentGame) + "_" + newestfile.split('.')[0] + '.' + self.settings.videoFormat
+
+            # Checks if there already is a file with this name to prevent overwriting an existing file
             for f in os.listdir(self.settings.videoPath):
-                if f == newname:
-                    newname = '{}_v2'.format(newname)
+                if f == newName:
+                    newName = '{}_v2'.format(newName)
 
             # Renames the temporary text file
-            os.rename(self.tempfile, self.settings.videoPath + '/' + newname)
+            os.rename(self.tempfile, self.settings.videoPath + '/' + newName)
+
+            # Rename the video file once the recording software is done with it.
+            couldRename = False
+            while not couldRename:
+                try:
+                    os.rename(self.settings.videoPath + '/' + newestfile, self.settings.videoPath + '/' + newVideoName)
+                    couldRename = True
+                except WindowsError:
+                    time.sleep(0.1)
+
             f = open(self.tempfile, 'a')
             f.close()
 
             # reset the log Count
             self.logCount = 0
+
             # Removes the temporary text file in case it still exists (Not sure if needed, to lazy to test)
             try:
                 os.remove(self.tempfile)
@@ -93,3 +107,5 @@ class TextFile(object):
 
         else:
             ui.logOutput.append("You are not recording, press {} to start recording.".format(self.settings.startRecord))
+
+        return

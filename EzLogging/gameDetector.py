@@ -1,6 +1,7 @@
 import subprocess
 import json
 import collections
+import os
 
 
 def get_processes():
@@ -28,7 +29,7 @@ def running_games():
             if process == game:
                 runningGames.append(name)
     if len(runningGames) == 0:
-        return ['No Game']
+        return ['No Game Running']
     else:
         return runningGames
 
@@ -36,10 +37,8 @@ def running_games():
 def add_game(process, game):
     """Add a game to the list of known games."""
     games = get_games()
-
     if process not in games:
         games[process] = game
-        print games
     with open("games.json", "w") as f:
         f.write(json.dumps(games, sort_keys=True,
                            indent=4, separators=(',', ': ')))
@@ -47,8 +46,16 @@ def add_game(process, game):
 
 def get_games():
     """read the list of known games."""
+    if not os.path.isfile("games.json"):
+        open("games.json", 'a').close()
+
     with open("games.json", "r") as f:
         fileContent = f.read()
-    games = json.loads(fileContent)
+    try:
+        games = json.loads(fileContent)
+    except ValueError:
+        games = {}
+
+
     collections.OrderedDict(sorted(games.items()))
     return games

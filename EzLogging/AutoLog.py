@@ -8,7 +8,7 @@ from Config import Settings
 
 class Clip:
 
-    def __init__(self, settings,ui, timing, originalFile):
+    def __init__(self, settings, ui, timing, originalFile):
 
         self.settings = settings
         self.ui = ui
@@ -103,8 +103,6 @@ class Clip:
             self.ui.logOutput.append("Clip already logged delete it if you want to log it again.")
 
 
-
-
 def sort_files(fileToSort, destination):
     '''
     Moves file to said destination.
@@ -177,11 +175,12 @@ def main(settings, ui):
         if textFileExists is False:
             noTextFile = "{}/NoTextFile".format(settings.videoPath)
             sort_files(videoFile, noTextFile)
+
     # Loops through all the remaining videos in said folder
     videoFiles = glob.glob(
         "{}/*.{}".format(settings.videoPath, settings.videoFormat))
-    for videoFile in videoFiles:
 
+    for videoFile in videoFiles:
         name = os.path.basename(videoFile.rsplit('.', 1)[0])
         textFile = "{}/{}.txt".format(settings.videoPath, name)
         timings = get_timings(textFile, videoFile)
@@ -214,10 +213,11 @@ def main(settings, ui):
 
         # exports all the processed timings
         for clip in mergedClips:
+            game = name.partition('_')[0]
             videoIndex = videoFiles.index(videoFile)
             clipIndex = mergedClips.index(clip)
             # Probably not the cleanest way to do this :
-            clip.path = "{}/{}_Clip_".format(exportPath, name) + \
+            clip.path = "{}/{}/{}_Clip_".format(exportPath, game, name) + \
                 "{0:0>3}".format(clipIndex + 1) + ".{}" \
                 .format(settings.videoFormat)
             ui.logOutput.append("\n--------------\n")
