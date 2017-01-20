@@ -1,5 +1,5 @@
+from os.path import expanduser
 import ConfigParser
-import os
 import utils
 
 # TODO: deal with dumb fucks who enter the wrong type of variable
@@ -7,29 +7,22 @@ import utils
 
 class Settings(object):
 
-    def __init__(self,
-                 videoPath=None,
-                 videoFormat=None,
-                 ffmpeg=None,
-                 cutBefore=0,
-                 cutAfter=0,
-                 startRecord=None,
-                 stopRecord=None,
-                 logTime=None):
+    def __init__(self):
 
-        self.videoPath = videoPath
-        self.videoFormat = videoFormat
-        self.ffmpeg = ffmpeg
-        self.cutBefore = cutBefore
-        self.cutAfter = cutAfter
-        self.startRecord = startRecord
-        self.stopRecord = stopRecord
-        self.logTime = logTime
+        self.videoPath = None
+        self.videoFormat = None
+        self.ffmpeg = None
+        self.cutBefore = None
+        self.cutAfter = None
+        self.startRecord = None
+        self.stopRecord = None
+        self.logTime = None
+        self.configPath = expanduser("~/EzLogging/config.cfg")
+        self.read_config()
 
     def set_config(self):
         cfg = ConfigParser.ConfigParser()
-
-        cfgfile = open('Config.cfg', 'w')
+        cfgfile = open(self.configPath, 'w')
         cfg.add_section('File')
         cfg.add_section('Hotkeys')
 
@@ -67,7 +60,7 @@ class Settings(object):
     def read_config(self):
         config = {}
         cfg = ConfigParser.ConfigParser()
-        cfg.read('Config.cfg')
+        cfg.read(self.configPath)
 
         # Puts all the settings in a dictionary
         for section in cfg.sections():
@@ -81,7 +74,7 @@ class Settings(object):
                     print("exception on %s!" % option)
                     config[option] = None
 
-        # convert the directory to attributes
+        # convert the config file to attributes
         self.videoPath = config['video path']
         self.videoFormat = config['video format']
         self.ffmpeg = config['ffmpeg path']
