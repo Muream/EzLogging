@@ -1,4 +1,4 @@
-from os.path import expanduser
+import os
 import ConfigParser
 import utils
 
@@ -17,7 +17,12 @@ class Settings(object):
         self.startRecord = None
         self.stopRecord = None
         self.logTime = None
-        self.configPath = expanduser("~/EzLogging/config.cfg")
+        if os.name == 'posix' and os.getenv("USER") == "root":
+            sudoUser = os.getenv("SUDO_USER")
+            self.configPath = "/home/{}/EzLogging/config.cfg".format(sudoUser)
+        else:
+            self.configPath = os.path.expanduser("~/EzLogging/config.cfg")
+        print self.configPath
         self.read_config()
 
     def set_config(self):

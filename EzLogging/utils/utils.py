@@ -5,9 +5,9 @@ def check_path(path):
     return path
 
 
-def convert_string(string):
+def to_alpha_num(string):
     newString = ""
-    for index, char in enumerate(string):
+    for char in string:
         if char.isalpha() or char.isdigit():
             newString = newString + char
 
