@@ -22,7 +22,6 @@ class Settings(object):
             self.configPath = "/home/{}/EzLogging/config.cfg".format(sudoUser)
         else:
             self.configPath = os.path.expanduser("~/EzLogging/config.cfg")
-        print self.configPath
         self.read_config()
 
     def set_config(self):

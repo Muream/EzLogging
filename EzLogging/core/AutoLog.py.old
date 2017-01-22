@@ -188,7 +188,7 @@ def main(settings, ui):
 
         # processes all timings in file
         for timing in timings:
-
+###############################################################################
             currentIndex = timings.index(timing)
             clip = Clip(settings, ui, timing, videoFile)
             clip.timing_to_seconds()
