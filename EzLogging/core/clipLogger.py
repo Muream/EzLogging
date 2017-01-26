@@ -29,38 +29,11 @@ def clipLogger(cfg):
     videoFiles = glob('*.{}'.format(cfg['video format']))
 
     for video in videoFiles:
-        print video
+        # print video
         textFile = video.partition('.')[0] + '.txt'
         timeLogs = utils.get_timings(textFile)
+        print video
 
-        for i, timeLog in enumerate(timeLogs):
-            # ## figure out how tow check the next timeLog if the previous one
-            # ## has been merged
-            seconds = utils.timelog_to_seconds(timeLog)
-            clipRange = utils.get_range(seconds,
-                                        cfg['cut before'],
-                                        cfg['cut after'])
+        merged_clips = utils.merge_clips(timeLogs, cfg)
+        break
 
-            try:
-                nextTimeLog = timeLogs[i+1]
-                nextSeconds = utils.timelog_to_seconds(nextTimeLog)
-                nextClipRange = utils.get_range(nextSeconds,
-                                                cfg['cut before'],
-                                                cfg['cut after'])
-            except IndexError:
-                pass
-            shouldMerge = utils.should_merge(clipRange,
-                                             nextClipRange,
-                                             cfg['cut before'],
-                                             cfg['cut after'])
-            if shouldMerge:
-                timeLogs.remove(nextTimeLog)
-            print "timelog: ", timeLog
-            print "newxt timelog: ", nextTimeLog
-            print "seconds: ", seconds
-            print "next seconds: ", nextSeconds
-            print "range: ", clipRange
-            print "next range: ", nextClipRange
-            print "should merge: ", shouldMerge
-            print
-        print
