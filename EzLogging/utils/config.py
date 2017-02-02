@@ -17,7 +17,7 @@ def read_config():
     config = {}
     parser = SafeConfigParser()
     parser.read(CONFIG)
-
+    print parser
     for name in parser.options('Strings'):
         config[name] = parser.get('Strings', name)
 

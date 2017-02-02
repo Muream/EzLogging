@@ -1,17 +1,16 @@
 from __future__ import absolute_import
 from core.timeLogger import TimeLogger
 from inputs import get_key
-
+from utils import config
 
 def main():
-
-    timeLogger = TimeLogger()
+    cfg = config.read_config()
+    timeLogger = TimeLogger(cfg)
     listening = True
     while listening:
         kbEvents = get_key()
         if kbEvents:
             for kbEvent in kbEvents:
-                # print(event.ev_type, event.code, event.state)
                 if kbEvent.code == 'KEY_F6' and kbEvent.state == 0:
                     timeLogger.log_time()
                 elif kbEvent.code == 'KEY_F7' and kbEvent.state == 0:

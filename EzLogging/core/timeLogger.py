@@ -2,13 +2,12 @@ from __future__ import absolute_import
 import time
 import os.path
 from glob import glob
-from utils.config import Settings
-
+from utils import config
 
 class TimeLogger:
 
-    def __init__(self):
-        self.settings = Settings()
+    def __init__(self, cfg):
+        self.cfg = cfg
         self.isRecording = False
         self.starTime = None
         self.tempFile = None
@@ -19,7 +18,7 @@ class TimeLogger:
         if not self.isRecording:
             self.starTime = time.time()
             tempName = 'Temp.txt'
-            self.tempFile = '{}/{}'.format(self.settings.videoPath, tempName)
+            self.tempFile = '{}/{}'.format(self.cfg["video path"], tempName)
             f = open(self.tempFile, 'a')
             f.close()
             self.isRecording = True
@@ -42,8 +41,8 @@ class TimeLogger:
 
     def close_file(self):
         if self.isRecording:
-            os.chdir(self.settings.videoPath)
-            newestVideo = max(glob('*.{}'.format(self.settings.videoFormat)),
+            os.chdir(self.cfg["video path"])
+            newestVideo = max(glob('*.{}'.format(self.cfg["video format"])),
                               key=os.path.getctime)
             newName = ''.join((newestVideo.split('.')[0], '.txt'))
             os.rename(self.tempFile, newName)
