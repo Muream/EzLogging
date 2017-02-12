@@ -10,3 +10,4 @@ OBS_EzLogging.bat
 *.sublime*
 games.json
 .vscode
+tags
