@@ -9,3 +9,4 @@ PySideTest.py
 OBS_EzLogging.bat
 *.sublime*
 games.json
+.vscode

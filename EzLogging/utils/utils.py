@@ -120,14 +120,3 @@ def merge_clips(timeLogs, cfg):
             except IndexError:
                 break
                 pass
-
-
-
-
-
-
-
-
-
-
-

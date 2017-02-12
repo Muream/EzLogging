@@ -1,8 +1,7 @@
-from __future__ import absolute_import
 import time
 import os.path
 from glob import glob
-from utils import config
+
 
 class TimeLogger:
 
@@ -13,7 +12,7 @@ class TimeLogger:
         self.tempFile = None
         self.logCount = 0
 
-    def create_file(self):
+    def create_file(self, ui):
         """Creates a temp.txt file and starts a stopwatch."""
         if not self.isRecording:
             self.starTime = time.time()
@@ -22,11 +21,11 @@ class TimeLogger:
             f = open(self.tempFile, 'a')
             f.close()
             self.isRecording = True
-            print "Recording"
+            ui.print_log_output("Recording")
         else:
-            print "File already open."
+            ui.print_log_output("File already open.")
 
-    def log_time(self):
+    def log_time(self, ui):
         """Logs the current time in the temp.txt file."""
         if self.isRecording:
             seconds = int(time.time() - self.starTime)
@@ -35,16 +34,23 @@ class TimeLogger:
             with open(self.tempFile, 'a') as f:
                 f.write(currentTime + '\n')
             self.logCount += 1
-            print "Entry {0:0>2}: ".format(self.logCount) + currentTime
+            ui.print_log_output("Entry {0:0>2}: ".format(self.logCount) + currentTime)
         else:
-            print "You are not recording."
+            ui.print_log_output("You are not recording.")
 
-    def close_file(self):
+    def close_file(self, ui):
         if self.isRecording:
             os.chdir(self.cfg["video path"])
-            newestVideo = max(glob('*.{}'.format(self.cfg["video format"])),
-                              key=os.path.getctime)
-            newName = ''.join((newestVideo.split('.')[0], '.txt'))
-            os.rename(self.tempFile, newName)
+            newestVideo = None
+            try:
+                newestVideo = max(glob('*.{}'.format(self.cfg["video format"])),
+                                  key=os.path.getctime)
+            except ValueError:
+                ui.print_log_output("no video found. couldn't rename the temp file.")
+
+            if newestVideo:
+                newName = ''.join((newestVideo.split('.')[0], '.txt'))
+                os.rename(self.tempFile, newName)
+
             self.isRecording = False
-            print "Recording over"
+            ui.print_log_output("Recording over")
