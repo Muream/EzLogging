@@ -3,10 +3,9 @@ import PySide.QtGui as QtGui
 import keyboard
 import threading
 
-sys.path.append("/home/muream/github/EzLogging/EzLogging")
-
 from core.timeLogger import TimeLogger
 from utils import config
+from settingsDialog import SettingsDialog
 
 
 class EzLoggingUI(QtGui.QMainWindow):
@@ -15,9 +14,18 @@ class EzLoggingUI(QtGui.QMainWindow):
     def __init__(self, *args):
         super(EzLoggingUI, self).__init__(*args)
 
-        self.cfg = config.read_config()
+        self.cfg = config.Config()
+        if not self.cfg.check_config:
+            self.launch_settings_dialog()
 
         self.setup_ui()
+
+    def launch_settings_dialog(self):
+        self.settingsDialog = SettingsDialog(self.cfg, self)
+        self.settingsDialog.show()
+
+    def update_ui(self):
+        self.cfg.read_config()
 
     def setup_ui(self):
 
@@ -49,9 +57,20 @@ class EzLoggingUI(QtGui.QMainWindow):
     def handle_events(self):
         timeLogger = TimeLogger(self.cfg)
 
-        keyboard.add_hotkey(self.cfg['log time'], timeLogger.log_time, args=[self])
-        keyboard.add_hotkey(self.cfg['start record'], timeLogger.create_file, args=[self])
-        keyboard.add_hotkey(self.cfg['stop record'], timeLogger.close_file, args=[self])
+        keyboard.add_hotkey(
+            self.cfg.logTime,
+            timeLogger.log_time, args=[self]
+        )
+        keyboard.add_hotkey(
+            self.cfg.startRecord,
+            timeLogger.create_file,
+            args=[self]
+        )
+        keyboard.add_hotkey(
+            self.cfg.stopRecord,
+            timeLogger.close_file,
+            args=[self]
+        )
         keyboard.wait()
 
     def listen_hotkeys(self):

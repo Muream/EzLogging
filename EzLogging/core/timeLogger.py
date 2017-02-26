@@ -17,7 +17,7 @@ class TimeLogger:
         if not self.isRecording:
             self.starTime = time.time()
             tempName = 'Temp.txt'
-            self.tempFile = '{}/{}'.format(self.cfg["video path"], tempName)
+            self.tempFile = '{}/{}'.format(self.cfg.videoPath, tempName)
             f = open(self.tempFile, 'a')
             f.close()
             self.isRecording = True
@@ -34,19 +34,25 @@ class TimeLogger:
             with open(self.tempFile, 'a') as f:
                 f.write(currentTime + '\n')
             self.logCount += 1
-            ui.print_log_output("Entry {0:0>2}: ".format(self.logCount) + currentTime)
+            ui.print_log_output(
+                "Entry {0:0>2}: ".format(self.logCount) + currentTime
+            )
         else:
             ui.print_log_output("You are not recording.")
 
     def close_file(self, ui):
         if self.isRecording:
-            os.chdir(self.cfg["video path"])
+            os.chdir(self.cfg.videoPath)
             newestVideo = None
             try:
-                newestVideo = max(glob('*.{}'.format(self.cfg["video format"])),
-                                  key=os.path.getctime)
+                newestVideo = max(
+                    glob('*.{}'.format(self.cfg.videoFormat)),
+                    key=os.path.getctime
+                )
             except ValueError:
-                ui.print_log_output("no video found. couldn't rename the temp file.")
+                ui.print_log_output(
+                    "no video found. couldn't rename the temp file."
+                )
 
             if newestVideo:
                 newName = ''.join((newestVideo.split('.')[0], '.txt'))

@@ -1,16 +1,17 @@
-from __future__ import absolute_import
-from core.clipLogger import clipLogger
-from utils import config
+from ui.EzLoggingUI import EzLoggingUI
+from PySide import QtGui
+import sys
 
-cfg = config.read_config()
 
-clipLogger(cfg)
+def show():
+    app = QtGui.QApplication(sys.argv)
 
-# myList = range(0, 100)
-# print myList
-# for index, element in enumerate(myList):
-#     try:
-#         myList.remove(myList[index+1])
-#     except:
-#         pass
-# print myList
+    ui = EzLoggingUI()
+    ui.show()
+
+    app.exec_()
+    sys.exit()
+
+
+if __name__ == '__main__':
+    show()

@@ -1,19 +1,14 @@
-from PySide import QtGui, QtCore
+from PySide import QtGui
 from hotkeyPushButton import HotkeyPushButton
-from Config import Settings
-
+import utils.config as config
 
 class SettingsDialog(QtGui.QDialog):
 
-    def __init__(self, settings, parentUI, *args):
+    def __init__(self, cfg, parentUI, *args):
         super(SettingsDialog, self).__init__(*args)
-        self.settings = settings
+        self.cfg = cfg
         self.parentUI = parentUI
         self.setup_ui()
-
-        self.startRecordHotkey = settings.startRecord
-        self.stopRecordHotkey = settings.stopRecord
-        self.logTimeHotkey = settings.logTime
 
     def setup_ui(self):
 
@@ -48,7 +43,12 @@ class SettingsDialog(QtGui.QDialog):
         self.videoPathLayout.addWidget(self.videoPathLabel)
 
         self.videoPathLineEdit = QtGui.QLineEdit()
-        self.videoPathLineEdit.setText(str(self.settings.videoPath))
+
+        try:
+            self.videoPathLineEdit.setText(str(self.settings.videoPath))
+        except:
+            pass
+
         self.videoPathLayout.addWidget(self.videoPathLineEdit)
 
         self.videoPathBrowseButton = QtGui.QPushButton('Browse')
@@ -67,8 +67,7 @@ class SettingsDialog(QtGui.QDialog):
         self.videoFormatComboBox.addItem("mov")
         self.videoFormatComboBox.addItem("mkv")
         self.videoFormatComboBox.addItem("flv")
-        index = self.videoFormatComboBox.findText(str(self.settings.videoFormat))
-        self.videoFormatComboBox.setCurrentIndex(index)
+
         self.videoFormatLayout.addWidget(self.videoFormatComboBox)
 
     def hotkeys_layout(self):
@@ -78,17 +77,17 @@ class SettingsDialog(QtGui.QDialog):
         self.startRecordLabel = QtGui.QLabel('Start Recording')
         self.hotkeysLayout.addWidget(self.startRecordLabel)
 
-        self.startRecordButton = HotkeyPushButton(hotkey=str(self.settings.startRecord))
+        self.startRecordButton = HotkeyPushButton()
         self.hotkeysLayout.addWidget(self.startRecordButton)
 
         self.startRecordLabel = QtGui.QLabel('Log Time')
         self.hotkeysLayout.addWidget(self.startRecordLabel)
-        self.logTimeButton = HotkeyPushButton(hotkey=str(self.settings.logTime))
+        self.logTimeButton = HotkeyPushButton()
         self.hotkeysLayout.addWidget(self.logTimeButton)
 
         self.startRecordLabel = QtGui.QLabel('Stop Recording')
         self.hotkeysLayout.addWidget(self.startRecordLabel)
-        self.stopRecordButton = HotkeyPushButton(hotkey=str(self.settings.stopRecord))
+        self.stopRecordButton = HotkeyPushButton()
         self.hotkeysLayout.addWidget(self.stopRecordButton)
 
     def ffmpeg_path_layout(self):
@@ -99,7 +98,6 @@ class SettingsDialog(QtGui.QDialog):
         self.ffmpegPathLayout.addWidget(self.ffmpegPathLabel)
 
         self.ffmpegPathLineEdit = QtGui.QLineEdit()
-        self.ffmpegPathLineEdit.setText(str(self.settings.ffmpeg))
         self.ffmpegPathLayout.addWidget(self.ffmpegPathLineEdit)
 
         self.ffmpegPathBrowseButton = QtGui.QPushButton('Browse')
@@ -115,7 +113,6 @@ class SettingsDialog(QtGui.QDialog):
 
         self.trimBeforeSpinBox = QtGui.QSpinBox()
         self.trimBeforeSpinBox.setMinimum(0)
-        self.trimBeforeSpinBox.setValue(self.settings.cutBefore)
         self.trimSettingsLayout.addWidget(self.trimBeforeSpinBox)
 
         self.trimAfterLabel = QtGui.QLabel("Time after timecode (s)")
@@ -123,7 +120,6 @@ class SettingsDialog(QtGui.QDialog):
 
         self.trimAfterSpinBox = QtGui.QSpinBox()
         self.trimAfterSpinBox.setMinimum(0)
-        self.trimAfterSpinBox.setValue(self.settings.cutAfter)
         self.trimSettingsLayout.addWidget(self.trimAfterSpinBox)
 
     def apply_settings_button(self):
@@ -155,14 +151,14 @@ class SettingsDialog(QtGui.QDialog):
         self.stopRecordHotkey = self.stopRecordButton.hotkey
         self.logTimeHotkey = self.logTimeButton.hotkey
 
-        self.settings = Settings(videoPath=self.videoPathLineEdit.text(),
-                                 videoFormat=self.videoFormatComboBox.currentText(),
-                                 ffmpeg=self.ffmpegPathLineEdit.text(),
-                                 cutBefore=self.trimBeforeSpinBox.value(),
-                                 cutAfter=self.trimAfterSpinBox.value(),
-                                 startRecord=self.startRecordHotkey,
-                                 stopRecord=self.stopRecordHotkey,
-                                 logTime=self.logTimeHotkey)
-        self.settings.set_config()
-        self.settings.read_config()
+        self.cfg.set_config(
+            videoPath=self.videoPathLineEdit.text(),
+            videoFormat=self.videoFormatComboBox.currentText(),
+            ffmpegPath=self.ffmpegPathLineEdit.text(),
+            cutBefore=self.trimBeforeSpinBox.value(),
+            cutAfter=self.trimAfterSpinBox.value(),
+            startRecord=self.startRecordHotkey,
+            stopRecord=self.stopRecordHotkey,
+            logTime=self.logTimeHotkey
+        )
         self.parentUI.update_ui()

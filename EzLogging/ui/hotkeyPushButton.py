@@ -4,7 +4,7 @@ import sys
 
 class HotkeyPushButton(QtGui.QPushButton):
 
-    def __init__(self, hotkey):
+    def __init__(self, hotkey="None"):
         super(HotkeyPushButton, self).__init__()
         self.changeHotkey = False
         self.hotkey = hotkey

@@ -1,7 +1,7 @@
 import os
 
 
-def check_path(path):
+def normalize_path(path):
     path = path.replace('\\', '/')
     if path[-1:] == '/':
         path = path[:-1]
