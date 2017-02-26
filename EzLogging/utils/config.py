@@ -16,6 +16,12 @@ class Config(object):
         self.cutBefore = 0
         self.cutAfter = 0
 
+        if os.name == 'posix' and os.getenv("USER") == "root":
+            SUDOUSER = os.getenv("SUDO_USER")
+            self.configFolder = "/home/{}/EzLogging/".format(SUDOUSER)
+        else:
+            self.configFolder = os.path.expanduser("~/EzLogging/")
+
         # read the config if we can
         try:
             self.read_config()
@@ -30,11 +36,6 @@ class Config(object):
         else, returns None
         """
         configExists = False
-        if os.name == 'posix' and os.getenv("USER") == "root":
-            SUDOUSER = os.getenv("SUDO_USER")
-            self.configFolder = "/home/{}/EzLogging/".format(SUDOUSER)
-        else:
-            self.configFolder = os.path.expanduser("~/EzLogging/")
 
         # Create the config folder and config file
         if self.configFolder:
