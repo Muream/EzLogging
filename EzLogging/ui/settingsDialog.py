@@ -1,6 +1,6 @@
 from PySide import QtGui
 from hotkeyPushButton import HotkeyPushButton
-import utils.config as config
+
 
 class SettingsDialog(QtGui.QDialog):
 
@@ -22,6 +22,7 @@ class SettingsDialog(QtGui.QDialog):
         self.setLayout(self.mainLayout)
 
         self.settings_layout()
+        self.fill_settings_ui()
 
     def settings_layout(self):
         self.settingsLayout = QtGui.QVBoxLayout()
@@ -43,11 +44,6 @@ class SettingsDialog(QtGui.QDialog):
         self.videoPathLayout.addWidget(self.videoPathLabel)
 
         self.videoPathLineEdit = QtGui.QLineEdit()
-
-        try:
-            self.videoPathLineEdit.setText(str(self.settings.videoPath))
-        except:
-            pass
 
         self.videoPathLayout.addWidget(self.videoPathLineEdit)
 
@@ -145,6 +141,20 @@ class SettingsDialog(QtGui.QDialog):
         self.browseFfmpegFileDialog.exec_()
         filename = self.browseFfmpegFileDialog.selectedFiles()[0]
         self.ffmpegPathLineEdit.setText(filename)
+
+    def fill_settings_ui(self):
+        self.videoPathLineEdit.setText(str(self.cfg.videoPath))
+        index = self.videoFormatComboBox.findText(str(self.cfg.videoFormat))
+        self.videoFormatComboBox.setCurrentIndex(index)
+
+        self.startRecordButton.setText(str(self.cfg.startRecord))
+        self.stopRecordButton.setText(str(self.cfg.stopRecord))
+        self.logTimeButton.setText(str(self.cfg.logTime))
+
+        self.ffmpegPathLineEdit.setText(str(self.cfg.ffmpegPath))
+
+        self.trimBeforeSpinBox.setValue(float(self.cfg.cutBefore))
+        self.trimAfterSpinBox.setValue(float(self.cfg.cutAfter))
 
     def apply_settings(self):
         self.startRecordHotkey = self.startRecordButton.hotkey

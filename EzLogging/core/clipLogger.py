@@ -3,8 +3,8 @@ from glob import glob
 from utils import utils
 
 
-def clipLogger(cfg):
-    os.chdir(cfg['video path'])
+def clipLogger(cfg, ui):
+    os.chdir(cfg.videoPath)
 
     # create the "clips" folder
     if not os.path.exists('Clips'):
@@ -15,7 +15,7 @@ def clipLogger(cfg):
         os.makedirs('Processed')
 
     # remove the videos with no associated text files
-    videoFiles = glob('*.{}'.format(cfg['video format']))
+    videoFiles = glob('*.{}'.format(cfg.videoFormat))
 
     if not os.path.exists('NoTextFile'):
         os.makedirs('NoTextFile')
@@ -26,7 +26,7 @@ def clipLogger(cfg):
 
     # loop through the remaining videos and creates a dictionary of this form:
     # {timeLog1 : duration1, timeLog2, duration2}
-    videoFiles = glob('*.{}'.format(cfg['video format']))
+    videoFiles = glob('*.{}'.format(cfg.videoFormat))
 
     for video in videoFiles:
         # print video
@@ -36,4 +36,6 @@ def clipLogger(cfg):
 
         merged_clips = utils.merge_clips(timeLogs, cfg)
         break
+
+    return merged_clips
 

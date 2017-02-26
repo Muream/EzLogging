@@ -1,7 +1,5 @@
 import sys
-sys.path.append("/home/muream/github/EzLogging/EzLogging")
-
-import ui.EzLoggingUI
+from ui import EzLoggingUI
 
 if __name__ == "__main__":
-    ui.EzLoggingUI.show()
+    EzLoggingUI.show()

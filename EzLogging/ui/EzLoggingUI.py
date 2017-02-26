@@ -4,6 +4,7 @@ import keyboard
 import threading
 
 from core.timeLogger import TimeLogger
+from core.clipLogger import clipLogger
 from utils import config
 from settingsDialog import SettingsDialog
 
@@ -20,21 +21,43 @@ class EzLoggingUI(QtGui.QMainWindow):
 
         self.setup_ui()
 
-    def launch_settings_dialog(self):
-        self.settingsDialog = SettingsDialog(self.cfg, self)
-        self.settingsDialog.show()
+    def setup_ui(self):
+        self.setWindowTitle("EzLogging")
+        self.setMinimumSize(500, 500)
+
+        self.create_menus()
+        self.create_central_widget()
+        self.create_log_output()
+        self.listen_hotkeys()
 
     def update_ui(self):
         self.cfg.read_config()
 
-    def setup_ui(self):
+    def launch_settings_dialog(self):
+        self.settingsDialog = SettingsDialog(self.cfg, self)
+        self.settingsDialog.show()
 
-        self.setWindowTitle("EzLogging")
-        self.setMinimumSize(500, 500)
+    def launch_clip_trimmer(self):
+        clipLogger(self, self.cfg)
 
-        self.create_central_widget()
-        self.create_log_output()
-        self.listen_hotkeys()
+    def create_menus(self):
+        self.menuBar = self.menuBar()
+        self.create_file_menu()
+
+    def create_file_menu(self):
+        self.fileMenu = self.menuBar.addMenu('&File')
+        self.create_settings_menu_actions()
+        self.create_cliptrimmer_menu_actions()
+
+    def create_settings_menu_actions(self):
+        self.settingsAction = QtGui.QAction('&Settings', self)
+        self.settingsAction.triggered.connect(self.launch_settings_dialog)
+        self.fileMenu.addAction(self.settingsAction)
+
+    def create_cliptrimmer_menu_actions(self):
+        self.clipTrimmerAction = QtGui.QAction('&Trim Clips', self)
+        self.clipTrimmerAction.triggered.connect(self.launch_clip_trimmer)
+        self.fileMenu.addAction(self.settingsAction)
 
     def create_central_widget(self):
         self.setCentralWidget(QtGui.QWidget())

@@ -16,6 +16,12 @@ class Config(object):
         self.cutBefore = 0
         self.cutAfter = 0
 
+        # read the config if we can
+        try:
+            self.read_config()
+        except:
+            pass
+
     @property
     def check_config(self):
         """
@@ -89,12 +95,3 @@ class Config(object):
         self.logTime = parser.get('Hotkeys', 'log time')
         self.cutBefore = parser.get('Trimming', 'cut before')
         self.cutAfter = parser.get('Trimming', 'cut after')
-
-        print self.videoPath
-        print self.videoFormat
-        print self.ffmpegPath
-        print self.startRecord
-        print self.stopRecord
-        print self.logTime
-        print self.cutBefore
-        print self.cutAfter
