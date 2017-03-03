@@ -73,50 +73,12 @@ def get_range(seconds, cutBefore, cutAfter):
     return (start, end)
 
 
-def should_merge(clipRange, nextClipRange, cutBefore, cutAfter):
-    if clipRange[0] <= nextClipRange[0] <= clipRange[1]:
+def should_merge(clip, nextClip, cfg):
+    if clip.start <= nextClip.start <= clip.end:
         return True
     else:
         return False
 
 
-def merge_clips(timeLogs, cfg):
-    """
-    seems to not merge all the timings it should merge for some reason
-    """
-    for i, timeLog in enumerate(timeLogs):
-        clip = {}
-        clip['seconds'] = timelog_to_seconds(timeLog)
-        clip['range'] = get_range(clip['seconds'],
-                                  cfg['cut before'],
-                                  cfg['cut after'])
-        clip['start'] = clip['range'][0]
-        clip['end'] = clip['range'][1]
-
-        print "current timeLog : {} ------------------".format(timeLog)
-
-        while True:
-            print timeLogs
-            try:
-                nextTimeLog = timeLogs[i+1]
-                nextSeconds = timelog_to_seconds(nextTimeLog)
-                nextClipRange = get_range(nextSeconds,
-                                          cfg['cut before'],
-                                          cfg['cut after'])
-                shouldMerge = should_merge(clip['range'],
-                                           nextClipRange,
-                                           cfg['cut before'],
-                                           cfg['cut after'])
-                print shouldMerge
-                if shouldMerge:
-                    print "merging {} with {}".format(timeLog, nextTimeLog)
-                    clip['end'] = nextSeconds + cfg['cut after']
-                    clip['length'] = clip['end'] - clip['start']
-                    print 'clip now lasts {}'.format(clip['length'])
-                    timeLogs.remove(timeLogs[i+1])
-                else:
-                    print
-                    break
-            except IndexError:
-                break
-                pass
+def export_clip(clip, cfg):
+    print "exporting : " + clip.timeLog

@@ -22,11 +22,18 @@ class Config(object):
         else:
             self.configFolder = os.path.expanduser("~/EzLogging/")
 
+        if self.configFolder:
+            if not os.path.exists(self.configFolder):
+                os.makedirs(self.configFolder)
+
+            self.configFile = os.path.join(self.configFolder, "config.cfg")
+            self.configFile = utils.normalize_path(self.configFile)
         # read the config if we can
         try:
             self.read_config()
         except:
-            pass
+            print self.configFile
+            print "couldn't read config"
 
     @property
     def check_config(self):
@@ -38,18 +45,14 @@ class Config(object):
         configExists = False
 
         # Create the config folder and config file
-        if self.configFolder:
-            if not os.path.exists(self.configFolder):
-                os.makedirs(self.configFolder)
-
-            self.configFile = os.path.join(self.configFolder, "config.cfg")
-            self.configFile = utils.normalize_path(self.configFile)
-
-            if os.path.isfile(self.configFile):
-                configExists = True
+        if os.path.isfile(self.configFile):
+            configExists = True
+            try:
                 self.read_config()
-            else:
-                open(self.configFile, 'a').close()
+            except:
+                configExists = False
+        else:
+            open(self.configFile, 'a').close()
         return configExists
 
     def set_config(
@@ -94,5 +97,5 @@ class Config(object):
         self.startRecord = parser.get('Hotkeys', 'start record')
         self.stopRecord = parser.get('Hotkeys', 'stop record')
         self.logTime = parser.get('Hotkeys', 'log time')
-        self.cutBefore = parser.get('Trimming', 'cut before')
-        self.cutAfter = parser.get('Trimming', 'cut after')
+        self.cutBefore = float(parser.get('Trimming', 'cut before'))
+        self.cutAfter = float(parser.get('Trimming', 'cut after'))

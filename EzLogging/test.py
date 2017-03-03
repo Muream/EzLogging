@@ -1,4 +1,5 @@
-from utils.gameDetector import GameDetector
+from core.clipLogger import clipLogger
+from utils.config import Config
 
-print GameDetector.running_games()
-print GameDetector.get_processes()
+cfg = Config()
+clipLogger(cfg)

@@ -18,10 +18,9 @@ def transcode(source, target):
                        "-map", "0:2",
                        "-map", "0:3",
                        "-map", "0:4",
-                       "-vcodec", "dnxhd",
-                       "-b", "145M",
-                       "-acodec", "pcm_s16le",
-                       "-f", "mov",
+                       "-vcodec", "copy",
+                       "-acodec", "copy",
+                       "-f", "mp4",
                        targetVideoPath]
             FNULL = open(os.devnull, 'w')
             p = sp.Popen(command,
