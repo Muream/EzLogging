@@ -53,14 +53,14 @@ class Clip(object):
         self.length = self.end - self.start
 
     def export(self):
-        print "exporting : " + self.timeLog
-        print "length = " + str(self.length)
 
         if not os.path.exists(os.path.join(self.cfg.videoPath, 'Clips')):
             os.mkdir(self.cfg.videoPath, 'Clips')
 
         command = [
             "ffmpeg",
+            "-ss", str(self.start),
+            "-t", str(self.length),
             "-i", self.originalFile,
             "-map", "0:0",
             "-map", "0:1",
@@ -69,8 +69,7 @@ class Clip(object):
             "-map", "0:4",
             "-vcodec", "copy",
             "-acodec", "copy",
-            "-ss", str(self.start),
-            "-t", str(self.length),
+            "-avoid_negative_ts", "1",
             self.exportPath
         ]
         open(os.devnull, 'w')
@@ -82,4 +81,3 @@ class Clip(object):
         )
         # output = p.communicate('S/nL/n')[0]
         output, error = p.communicate()
-        # print output

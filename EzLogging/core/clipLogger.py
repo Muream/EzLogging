@@ -30,19 +30,22 @@ def clipLogger(cfg):
     videoFiles = glob('*.{}'.format(cfg.videoFormat))
 
     for video in videoFiles:
+
         textFile = video.partition('.')[0] + '.txt'
-        timeLogs = utils.get_timings(textFile)
-        print video
+        export_clips(video, textFile, cfg)
 
-        merged_clips = merge_clips(timeLogs, cfg, video)
+        utils.move_file(video, 'Processed')
+        print "Done!"
 
-        for clip in merged_clips:
-            clip.export()
-            print
-            print "----------------------------------------------------"
-            print
-        # break here to test on only one video
-        # break
+
+def export_clips(video, textFile, cfg):
+    timeLogs = utils.get_timings(textFile)
+    print video
+
+    merged_clips = merge_clips(timeLogs, cfg, video)
+
+    for clip in merged_clips:
+        clip.export()
 
 
 def merge_clips(timeLogs, cfg, video):
@@ -59,14 +62,12 @@ def merge_clips(timeLogs, cfg, video):
 
         clip = Clip(cfg, timeLog, video, i)
 
-        print " ------------------ current timeLog : {} ------------------".format(timeLog)
         shouldMerge = True
 
         mergeAttempts = 1
         while shouldMerge:
             try:
                 nextClip = Clip(cfg, timeLogs[i+mergeAttempts])
-                print "trying with " + nextClip.timeLog
                 shouldMerge = utils.should_merge(
                     clip,
                     nextClip,
@@ -74,19 +75,12 @@ def merge_clips(timeLogs, cfg, video):
                 )
                 if shouldMerge:
                     skipTimelogs.append(nextClip.timeLog)
-                    print "merging {} with {}".format(
-                        clip.timeLog,
-                        nextClip.timeLog
-                    )
                     clip.set_new_end(newEnd=nextClip.end+cfg.cutAfter)
-                    print 'clip now lasts {}'.format(clip.length)
                     mergeAttempts += 1
                 else:
-                    print "not merging"
                     clips.append(clip)
                     newTimeLogs.append(clip.timeLog)
             except IndexError:
-                print "No more timelogs to merge"
                 break
 
     return clips
