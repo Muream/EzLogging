@@ -59,4 +59,5 @@ class TimeLogger:
                 os.rename(self.tempFile, newName)
 
             self.isRecording = False
+            self.logCount = 0
             ui.print_log_output("Recording over")

@@ -94,7 +94,7 @@ class EzLoggingUI(QtGui.QMainWindow):
             timeLogger.close_file,
             args=[self]
         )
-        keyboard.wait()
+        # keyboard.wait()
 
     def listen_hotkeys(self):
         hotkeyThread = threading.Thread(target=self.handle_events)
