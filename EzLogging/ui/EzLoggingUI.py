@@ -37,7 +37,7 @@ class EzLoggingUI(QtGui.QMainWindow):
         self.settingsDialog = SettingsDialog(self.cfg, self)
         self.settingsDialog.show()
 
-    def launch_clip_trimmer(self):
+    def start_cliplogger(self):
         clipLogger(self, self.cfg)
 
     def create_menus(self):
@@ -47,17 +47,17 @@ class EzLoggingUI(QtGui.QMainWindow):
     def create_file_menu(self):
         self.fileMenu = self.menuBar.addMenu('&File')
         self.create_settings_menu_actions()
-        self.create_cliptrimmer_menu_actions()
+        self.create_cliplogger_menu_actions()
 
     def create_settings_menu_actions(self):
         self.settingsAction = QtGui.QAction('&Settings', self)
         self.settingsAction.triggered.connect(self.launch_settings_dialog)
         self.fileMenu.addAction(self.settingsAction)
 
-    def create_cliptrimmer_menu_actions(self):
-        self.clipTrimmerAction = QtGui.QAction('&Trim Clips', self)
-        self.clipTrimmerAction.triggered.connect(self.launch_clip_trimmer)
-        self.fileMenu.addAction(self.settingsAction)
+    def create_cliplogger_menu_actions(self):
+        self.clipLoggerAction = QtGui.QAction('&Log Clips', self)
+        self.clipLoggerAction.triggered.connect(self.start_cliplogger)
+        self.fileMenu.addAction(self.clipLoggerAction)
 
     def create_central_widget(self):
         self.setCentralWidget(QtGui.QWidget())

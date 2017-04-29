@@ -4,7 +4,7 @@ from utils import utils
 from core.clip import Clip
 
 
-def clipLogger(cfg):
+def clipLogger(ui, cfg):
     os.chdir(cfg.videoPath)
 
     # create the "clips" folder
@@ -32,15 +32,15 @@ def clipLogger(cfg):
     for video in videoFiles:
 
         textFile = video.partition('.')[0] + '.txt'
-        export_clips(video, textFile, cfg)
+        export_clips(ui, video, textFile, cfg)
 
         utils.move_file(video, 'Processed')
-        print "Done!"
+        ui.logOutput.append("Done!")
 
 
-def export_clips(video, textFile, cfg):
+def export_clips(ui, video, textFile, cfg):
     timeLogs = utils.get_timings(textFile)
-    print video
+    ui.logOutput.append(str(video))
 
     merged_clips = merge_clips(timeLogs, cfg, video)
 
