@@ -12,5 +12,5 @@ setup(
     install_requires=['pyside', 'keyboard'],
     dependency_links=['https://gitlab.com/kukulkan/core-packages'],
     url='https://github.com/muream/EzLogging',
-    download_url='git+https://github.com/muream/EzLogging',
+    download_url='git+https://github.com/muream/EzLogging#egg=EzLogging',
 )
