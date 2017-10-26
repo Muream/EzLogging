@@ -31,5 +31,5 @@ def get_matching_demo(time_to_match, timeout=10, acceptable_margin=10):
         print currentTime, startTime + timeout
         if currentTime > startTime + timeout:
             time_is_out = True
-            print time_is_out
+            print 'time_is_out:', time_is_out
     return latest_demo

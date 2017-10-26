@@ -26,12 +26,12 @@ class TimeLogger:
             open(self.tempFile, 'w').close()
             self.isRecording = True
             self.ui.print_log_output("Recording")
-            print config.csgo_manage_demos
             if config.csgo_manage_demos:
                 self.ui.print_log_output("Waiting for the CS:GO demo to be available")
                 self.temp_csgo_demo = csgo.get_matching_demo(self.starTime)
                 if self.temp_csgo_demo:
                     self.ui.print_log_output("CS:GO demo found!")
+                    print self.temp_csgo_demo
                 else:
                     self.ui.print_log_output("Couldn't find the CS:GO demo")
         else:
@@ -75,13 +75,21 @@ class TimeLogger:
             self.ui.print_log_output("Recording over")
 
             if config.csgo_manage_demos:
-                newName = ''.join((self.temp_csgo_demo.split('.')[0], '.dem'))
-                os.rename(self.temp_csgo_demo, newName)
-                self.temp_csgo_demo = newName
+                print newestVideo
+                if newestVideo:
+                    demo_basename = os.path.basename(self.temp_csgo_demo)
+                    demo_new_name = ''.join([
+                        os.path.basename(newestVideo).rpartition('.')[0],
+                        '.dem'
+                    ])
+                    demo_new_path = os.path.join(config.csgo_demos_path, demo_new_name)
+                    os.rename(self.temp_csgo_demo, demo_new_path)
+                    self.temp_csgo_demo = demo_new_path
                 if config.csgo_copy_demos:
                     demos_folder = os.path.join(config.video_path, 'demos')
                     if not os.path.exists(demos_folder):
                         os.makedirs(demos_folder)
                     shutil.copy(self.temp_csgo_demo, demos_folder)
+                    self.ui.print_log_output("Saved CS:GO demo.")
 
 
