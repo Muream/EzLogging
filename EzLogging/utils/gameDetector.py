@@ -2,13 +2,12 @@ import subprocess
 import json
 import collections
 import os
-from config import Config
+from EzLogging.core.config import Config
 
 class GameDetector(object):
 
     def __init__(self):
-        cfg = Config()
-        self.gamesListFile = os.path.join(cfg.configFolder, "games.json")
+        self.gamesListFile = os.path.join(config.configFolder, "games.json")
 
     @classmethod
     def get_processes(self):

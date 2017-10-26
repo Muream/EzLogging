@@ -1,101 +1,73 @@
-import os
-import utils
-from ConfigParser import SafeConfigParser
-
+import EzLogging.utils as utils
+import json
 
 class Config(object):
-    """Base config Class."""
+    """Configuration class.
 
+    This is a singleton so it stays in sync across the applcation.
+    to use it do:
+        from EzLogging.core.config import config
+        config.my_attr = 'my value'
+        print config.my_attr
+    if my_attr does not exist, it is added to the config json automatically.
+    when you get an attribute, it is directly fetched from the json.
+    any non existing attribute will return None.
+    """
     def __init__(self):
-        self.videoPath = ''
-        self.videoFormat = ''
-        self.ffmpegPath = ''
-        self.startRecord = ''
-        self.stopRecord = ''
-        self.logTime = ''
-        self.cutBefore = 0
-        self.cutAfter = 0
+        self._config_file = None
+        self._data = None
+        self.get_config_file()
 
-        if os.name == 'posix' and os.getenv("USER") == "root":
-            SUDOUSER = os.getenv("SUDO_USER")
-            self.configFolder = "/home/{}/EzLogging/".format(SUDOUSER)
+    def __setattr__(self, attr, value):
+        if not isinstance(attr, str):
+            attr = str(attr)
+        data = self.data
+        data[attr] = value
+        self.data = data
+
+    def __getattr__(self, attr):
+        if not isinstance(attr, str):
+            attr = str(attr)
+
+        if self.data.has_key(attr):
+            return self.data[attr]
         else:
-            self.configFolder = os.path.expanduser("~/EzLogging/")
-
-        if self.configFolder:
-            if not os.path.exists(self.configFolder):
-                os.makedirs(self.configFolder)
-
-            self.configFile = os.path.join(self.configFolder, "config.cfg")
-            self.configFile = utils.normalize_path(self.configFile)
-        # read the config if we can
-        try:
-            self.read_config()
-        except:
-            print self.configFile
-            print "couldn't read config"
+            return None
 
     @property
-    def check_config(self):
-        """
-        Checks if the config file exists.
-        if so, returns the config as a dictionnary.
-        else, returns None
-        """
-        configExists = False
+    def data(self):
+        return _data
 
-        # Create the config folder and config file
-        if os.path.isfile(self.configFile):
-            configExists = True
-            try:
-                self.read_config()
-            except:
-                configExists = False
+    @data.getter
+    def data(self):
+        with open(self._config_file, 'r') as f:
+            content = f.read()
+        return json.loads(content)
+
+    @data.setter
+    def data(self, content):
+        with open(self._config_file, 'w') as f:
+            content = json.dumps(content, indent=4)
+            f.write(content)
+
+    def get_config_file(self):
+        if os.name == 'posix' and os.getenv("USER") == "root":
+            sudo_user = os.getenv("SUDO_USER")
+            config_folder = "/home/{}/EzLogging/".format(sudo_user)
         else:
-            open(self.configFile, 'a').close()
-        return configExists
+            config_folder = os.path.expanduser("~/EzLogging/")
 
-    def set_config(
-        self,
-        videoPath='',
-        videoFormat='',
-        ffmpegPath='',
-        startRecord='',
-        stopRecord='',
-        logTime='',
-        cutBefore=0,
-        cutAfter=0,
-    ):
+        if not config_folder:
+            return
 
-        parser = SafeConfigParser()
-        parser.add_section('Hotkeys')
-        parser.add_section('Recordings')
-        parser.add_section('Trimming')
-        parser.add_section('Misc')
+        if not os.path.exists(config_folder):
+            os.makedirs(config_folder)
 
-        parser.set('Recordings', 'video path', str(videoPath))
-        parser.set('Recordings', 'video format', str(videoFormat))
-        parser.set('Misc', 'ffmpeg path', str(ffmpegPath))
-        parser.set('Hotkeys', 'start record', str(startRecord))
-        parser.set('Hotkeys', 'stop record', str(stopRecord))
-        parser.set('Hotkeys', 'log time', str(logTime))
-        parser.set('Trimming', 'cut before', str(cutBefore))
-        parser.set('Trimming', 'cut after', str(cutAfter))
+        self._config_file = os.path.join(config_folder, "config.json")
+        self._config_file = utils.normalize_path(self._config_file)
 
-        with open(self.configFile, 'w') as f:
-            parser.write(f)
+        if not os.path.exists(self._config_file):
+            open(self._config_file, 'w').close
 
-        self.read_config()
 
-    def read_config(self):
-        parser = SafeConfigParser()
-        parser.read(self.configFile)
-
-        self.videoPath = parser.get('Recordings', 'video path')
-        self.videoFormat = parser.get('Recordings', 'video format')
-        self.ffmpegPath = parser.get('Misc', 'ffmpeg path')
-        self.startRecord = parser.get('Hotkeys', 'start record')
-        self.stopRecord = parser.get('Hotkeys', 'stop record')
-        self.logTime = parser.get('Hotkeys', 'log time')
-        self.cutBefore = float(parser.get('Trimming', 'cut before'))
-        self.cutAfter = float(parser.get('Trimming', 'cut after'))
+config = Config()

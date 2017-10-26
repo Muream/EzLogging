@@ -10,3 +10,5 @@ OBS_EzLogging.bat
 games.json
 .vscode
 tags
+
+test\.py

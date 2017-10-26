@@ -1,31 +1,43 @@
 import time
-import os.path
+import os
+import shutil
 from glob import glob
+
+from EzLogging.core.config import config
+import EzLogging.utils.csgo as csgo
 
 
 class TimeLogger:
 
-    def __init__(self, cfg):
-        self.cfg = cfg
+    def __init__(self, ui):
         self.isRecording = False
         self.starTime = None
         self.tempFile = None
+        self.temp_csgo_demo = None
         self.logCount = 0
+        self.ui = ui
 
-    def create_file(self, ui):
+    def create_file(self):
         """Creates a temp.txt file and starts a stopwatch."""
         if not self.isRecording:
             self.starTime = time.time()
             tempName = 'Temp.txt'
-            self.tempFile = '{}/{}'.format(self.cfg.videoPath, tempName)
-            f = open(self.tempFile, 'a')
-            f.close()
+            self.tempFile = '{}/{}'.format(config.video_path, tempName)
+            open(self.tempFile, 'w').close()
             self.isRecording = True
-            ui.print_log_output("Recording")
+            self.ui.print_log_output("Recording")
+            print config.csgo_manage_demos
+            if config.csgo_manage_demos:
+                self.ui.print_log_output("Waiting for the CS:GO demo to be available")
+                self.temp_csgo_demo = csgo.get_matching_demo(self.starTime)
+                if self.temp_csgo_demo:
+                    self.ui.print_log_output("CS:GO demo found!")
+                else:
+                    self.ui.print_log_output("Couldn't find the CS:GO demo")
         else:
-            ui.print_log_output("File already open.")
+            self.ui.print_log_output("File already open.")
 
-    def log_time(self, ui):
+    def log_time(self):
         """Logs the current time in the temp.txt file."""
         if self.isRecording:
             seconds = int(time.time() - self.starTime)
@@ -34,23 +46,23 @@ class TimeLogger:
             with open(self.tempFile, 'a') as f:
                 f.write(currentTime + '\n')
             self.logCount += 1
-            ui.print_log_output(
+            self.ui.print_log_output(
                 "Entry {0:0>2}: ".format(self.logCount) + currentTime
             )
         else:
-            ui.print_log_output("You are not recording.")
+            self.ui.print_log_output("You are not recording.")
 
-    def close_file(self, ui):
+    def close_file(self):
         if self.isRecording:
-            os.chdir(self.cfg.videoPath)
+            os.chdir(config.video_path)
             newestVideo = None
             try:
                 newestVideo = max(
-                    glob('*.{}'.format(self.cfg.videoFormat)),
+                    glob('*.{}'.format(config.video_format)),
                     key=os.path.getctime
                 )
             except ValueError:
-                ui.print_log_output(
+                self.ui.print_log_output(
                     "no video found. couldn't rename the temp file."
                 )
 
@@ -60,4 +72,16 @@ class TimeLogger:
 
             self.isRecording = False
             self.logCount = 0
-            ui.print_log_output("Recording over")
+            self.ui.print_log_output("Recording over")
+
+            if config.csgo_manage_demos:
+                newName = ''.join((self.temp_csgo_demo.split('.')[0], '.dem'))
+                os.rename(self.temp_csgo_demo, newName)
+                self.temp_csgo_demo = newName
+                if config.csgo_copy_demos:
+                    demos_folder = os.path.join(config.video_path, 'demos')
+                    if not os.path.exists(demos_folder):
+                        os.makedirs(demos_folder)
+                    shutil.copy(self.temp_csgo_demo, demos_folder)
+
+

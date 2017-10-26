@@ -73,12 +73,12 @@ def get_range(seconds, cutBefore, cutAfter):
     return (start, end)
 
 
-def should_merge(clip, nextClip, cfg):
+def should_merge(clip, nextClip):
     if clip.start <= nextClip.start <= clip.end:
         return True
     else:
         return False
 
 
-def export_clip(clip, cfg):
-    print "exporting : " + clip.timeLog
+# def export_clip(clip):
+#     print "exporting : " + clip.timeLog

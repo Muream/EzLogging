@@ -1,33 +1,33 @@
 import os
 import subprocess
-from utils import utils
+from EzLogging.utils import utils
+import EzLogging.core.config
 
 
 class Clip(object):
 
-    def __init__(self, cfg, timeLog, originalFile=None, index=None):
-        self.cfg = cfg
+    def __init__(self, timeLog, originalFile=None, index=None):
         self.timeLog = timeLog
         self.index = index
         if originalFile:
-            self.originalFile = os.path.join(self.cfg.videoPath, originalFile)
+            self.originalFile = os.path.join(config.video_path, originalFile)
             originalFileName = originalFile.partition('.')[0]
             self.name = "{}_clip{}.{}".format(
                 originalFileName,
                 str(index),
-                self.cfg.videoFormat
+                config.video_format
             )
             self.exportPath = os.path.join(
-                self.cfg.videoPath,
+                config.video_path,
                 "Clips",
                 self.name
             )
 
         self.set_seconds()
-        self.start = self.seconds - self.cfg.cutBefore
+        self.start = self.seconds - config.cut_before
         if self.start < 0:
             self.start = 0
-        self.end = self.seconds + self.cfg.cutAfter
+        self.end = self.seconds + config.cut_after
 
         self.set_range()
         self.set_seconds()
@@ -54,8 +54,8 @@ class Clip(object):
 
     def export(self):
 
-        if not os.path.exists(os.path.join(self.cfg.videoPath, 'Clips')):
-            os.mkdir(self.cfg.videoPath, 'Clips')
+        if not os.path.exists(os.path.join(config.video_path, 'Clips')):
+            os.mkdir(config.video_path, 'Clips')
 
         command = [
             "ffmpeg",

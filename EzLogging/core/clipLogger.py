@@ -1,11 +1,12 @@
 import os
 from glob import glob
-from utils import utils
-from core.clip import Clip
+from EzLogging.utils import utils
+from EzLogging.core.clip import Clip
+from EzLogging.core.config import config
 
 
-def clipLogger(ui, cfg):
-    os.chdir(cfg.videoPath)
+def clipLogger(ui):
+    os.chdir(config.video_path)
 
     # create the "clips" folder
     if not os.path.exists('Clips'):
@@ -16,7 +17,7 @@ def clipLogger(ui, cfg):
         os.makedirs('Processed')
 
     # remove the videos with no associated text files
-    videoFiles = glob('*.{}'.format(cfg.videoFormat))
+    videoFiles = glob('*.{}'.format(config.video_format))
 
     if not os.path.exists('NoTextFile'):
         os.makedirs('NoTextFile')
@@ -27,28 +28,28 @@ def clipLogger(ui, cfg):
 
     # loop through the remaining videos and creates a dictionary of this form:
     # {timeLog1 : duration1, timeLog2, duration2}
-    videoFiles = glob('*.{}'.format(cfg.videoFormat))
+    videoFiles = glob('*.{}'.format(config.video_format))
 
     for video in videoFiles:
 
         textFile = video.partition('.')[0] + '.txt'
-        export_clips(ui, video, textFile, cfg)
+        export_clips(ui, video, textFile)
 
         utils.move_file(video, 'Processed')
         ui.logOutput.append("Done!")
 
 
-def export_clips(ui, video, textFile, cfg):
+def export_clips(ui, video, textFile):
     timeLogs = utils.get_timings(textFile)
     ui.logOutput.append(str(video))
 
-    merged_clips = merge_clips(timeLogs, cfg, video)
+    merged_clips = merge_clips(timeLogs, video)
 
     for clip in merged_clips:
         clip.export()
 
 
-def merge_clips(timeLogs, cfg, video):
+def merge_clips(timeLogs, video):
     """
     seems to not merge all the timings it should merge for some reason
     """
@@ -60,22 +61,21 @@ def merge_clips(timeLogs, cfg, video):
         if timeLog in skipTimelogs:
             continue
 
-        clip = Clip(cfg, timeLog, video, i)
+        clip = Clip(timeLog, video, i)
 
         shouldMerge = True
 
         mergeAttempts = 1
         while shouldMerge:
             try:
-                nextClip = Clip(cfg, timeLogs[i+mergeAttempts])
+                nextClip = Clip(timeLogs[i+mergeAttempts])
                 shouldMerge = utils.should_merge(
                     clip,
                     nextClip,
-                    cfg,
                 )
                 if shouldMerge:
                     skipTimelogs.append(nextClip.timeLog)
-                    clip.set_new_end(newEnd=nextClip.end+cfg.cutAfter)
+                    clip.set_new_end(newEnd=nextClip.end+config.cutAfter)
                     mergeAttempts += 1
                 else:
                     clips.append(clip)

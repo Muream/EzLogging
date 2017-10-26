@@ -1,5 +1,4 @@
 from PySide import QtGui, QtCore
-import sys
 
 
 class HotkeyPushButton(QtGui.QPushButton):
