@@ -89,3 +89,4 @@ class Clip(object):
         )
         # output = p.communicate('S/nL/n')[0]
         output, error = p.communicate()
+        print("{}'s length should be {}".format(self.name, self.length))

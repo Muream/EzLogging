@@ -1,5 +1,5 @@
 import sys
-import PySide.QtGui as QtGui
+import PySide2.QtWidgets as QtWidgets
 # import keyboard
 from pynput import keyboard
 import threading
@@ -10,7 +10,7 @@ from EzLogging.core.config import config
 from EzLogging.ui.settingsDialog import SettingsDialog
 
 
-class EzLoggingUI(QtGui.QMainWindow):
+class EzLoggingUI(QtWidgets.QMainWindow):
     "Base UI Class"
 
     def __init__(self, *args):
@@ -51,25 +51,25 @@ class EzLoggingUI(QtGui.QMainWindow):
         self.create_cliplogger_menu_actions()
 
     def create_settings_menu_actions(self):
-        self.settingsAction = QtGui.QAction('&Settings', self)
+        self.settingsAction = QtWidgets.QAction('&Settings', self)
         self.settingsAction.triggered.connect(self.launch_settings_dialog)
         self.fileMenu.addAction(self.settingsAction)
 
     def create_cliplogger_menu_actions(self):
-        self.clipLoggerAction = QtGui.QAction('&Log Clips', self)
+        self.clipLoggerAction = QtWidgets.QAction('&Log Clips', self)
         self.clipLoggerAction.triggered.connect(self.start_cliplogger)
         self.fileMenu.addAction(self.clipLoggerAction)
 
     def create_central_widget(self):
-        self.setCentralWidget(QtGui.QWidget())
-        self.centralWidget().setLayout(QtGui.QVBoxLayout())
+        self.setCentralWidget(QtWidgets.QWidget())
+        self.centralWidget().setLayout(QtWidgets.QVBoxLayout())
 
     def create_log_output(self):
         # the log output
-        self.logOutput = QtGui.QTextEdit()
+        self.logOutput = QtWidgets.QTextEdit()
         self.logOutput.setReadOnly(True)
 
-        self.logOutputLayout = QtGui.QHBoxLayout()
+        self.logOutputLayout = QtWidgets.QHBoxLayout()
         self.logOutputLayout.addWidget(self.logOutput)
         self.centralWidget().layout().addLayout(self.logOutputLayout)
 
@@ -96,7 +96,7 @@ class EzLoggingUI(QtGui.QMainWindow):
 
 
 def show():
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     ui = EzLoggingUI()
     ui.show()

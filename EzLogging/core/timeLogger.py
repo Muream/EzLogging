@@ -31,7 +31,6 @@ class TimeLogger:
                 self.temp_csgo_demo = csgo.get_matching_demo(self.starTime)
                 if self.temp_csgo_demo:
                     self.ui.print_log_output("CS:GO demo found!")
-                    print self.temp_csgo_demo
                 else:
                     self.ui.print_log_output("Couldn't find the CS:GO demo")
         else:
@@ -75,7 +74,6 @@ class TimeLogger:
             self.ui.print_log_output("Recording over")
 
             if config.csgo_manage_demos:
-                print newestVideo
                 if newestVideo:
                     demo_basename = os.path.basename(self.temp_csgo_demo)
                     demo_new_name = ''.join([

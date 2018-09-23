@@ -1,7 +1,7 @@
-from PySide import QtGui, QtCore
+from PySide2 import QtWidgets, QtCore
 
 
-class HotkeyPushButton(QtGui.QPushButton):
+class HotkeyPushButton(QtWidgets.QPushButton):
 
     def __init__(self, hotkey="None"):
         super(HotkeyPushButton, self).__init__()

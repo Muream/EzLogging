@@ -44,7 +44,7 @@ class Config(object):
         if name.startswith('_'):
             return super(Config, self).__getattribute__(name)
 
-        if self._data.has_key(name):
+        if name in self._data:
             return self._data[name]
         else:
             return None
@@ -84,9 +84,9 @@ class Config(object):
     def _get_config_file(self):
         if os.name == 'posix' and os.getenv("USER") == "root":
             sudo_user = os.getenv("SUDO_USER")
-            config_folder = "/home/{}/EzLogging/".format(sudo_user)
+            config_folder = "/home/{}/.config/ezlogging/".format(sudo_user)
         else:
-            config_folder = os.path.expanduser("~/EzLogging/")
+            config_folder = os.path.expanduser("~/.config/ezlogging/")
 
         if not config_folder:
             return

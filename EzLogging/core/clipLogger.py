@@ -64,23 +64,28 @@ def merge_clips(timeLogs, video):
         if timeLog in skipTimelogs:
             continue
 
-        clip = Clip(timeLog, video, i)
+        clip = Clip(timeLog, originalFile=video, index=i)
 
         shouldMerge = True
 
-        mergeAttempts = 0
+        mergeAttempts = 1
         while shouldMerge:
-            try:
-                nextClip = Clip(timeLogs[i+mergeAttempts])
-                shouldMerge = utils.should_merge(
-                    clip,
-                    nextClip,
-                )
-                skipTimelogs.append(nextClip.timeLog)
-                clip.set_new_end(newEnd=nextClip.end+config.cut_after)
-                mergeAttempts += 1
-            except IndexError as e:
+            nextIndex = i + mergeAttempts
+            print("Next Index", nextIndex)
+            # break if there's no more timestamps
+            if nextIndex >= len(timeLogs):
                 break
+
+            nextClip = Clip(timeLogs[nextIndex], originalFile=video, index=nextIndex)
+            shouldMerge = utils.should_merge(
+                clip,
+                nextClip,
+            )
+            if shouldMerge:
+                skipTimelogs.append(nextClip.timeLog)
+                clip.set_new_end(newEnd=nextClip.end)
+            mergeAttempts += 1
+
         clips.append(clip)
         newTimeLogs.append(clip.timeLog)
 

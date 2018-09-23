@@ -20,7 +20,7 @@ def get_matching_demo(time_to_match, timeout=10, acceptable_margin=10):
                 key=os.path.getctime
             )
         except ValueError:
-            print "no demos found."
+            print("no demos found.")
 
         if latest_demo:
             latest_demo = os.path.join(config.csgo_demos_path, latest_demo)
@@ -28,8 +28,6 @@ def get_matching_demo(time_to_match, timeout=10, acceptable_margin=10):
                 found = True
 
         currentTime = time.time()
-        print currentTime, startTime + timeout
         if currentTime > startTime + timeout:
             time_is_out = True
-            print 'time_is_out:', time_is_out
     return latest_demo

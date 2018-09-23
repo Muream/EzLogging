@@ -57,6 +57,7 @@ def timelog_to_seconds(timeLog):
     Converts the hh:mm:ss format in seconds
     '''
     timeLogSplit = timeLog.split(':')
+    print(timeLogSplit)
     hour = int(timeLogSplit[0])
     minute = int(timeLogSplit[1])
     second = int(timeLogSplit[2])
@@ -74,11 +75,13 @@ def get_range(seconds, cutBefore, cutAfter):
 
 
 def should_merge(clip, nextClip):
+    print("Clip", clip.name)
+    print("nextClip", nextClip.name)
+    print(clip.start, nextClip.start, clip.end)
     if clip.start <= nextClip.start <= clip.end:
+        print("Should merge")
         return True
     else:
+        print("Should not merge")
         return False
 
-
-# def export_clip(clip):
-#     print "exporting : " + clip.timeLog
