@@ -41,11 +41,14 @@ def clipLogger(ui):
 
 def export_clips(ui, video, textFile):
     timeLogs = utils.get_timings(textFile)
-    ui.logOutput.append(str(video))
+    ui.logOutput.append("Logging {}".format(str(video)))
 
     merged_clips = merge_clips(timeLogs, video)
 
-    for clip in merged_clips:
+    for i, clip in enumerate(merged_clips):
+        clip.index = i
+        ui.logOutput.append("Exporting clip {}".format(str(clip.index).zfill(3)))
+
         clip.export()
 
 
@@ -65,7 +68,7 @@ def merge_clips(timeLogs, video):
 
         shouldMerge = True
 
-        mergeAttempts = 1
+        mergeAttempts = 0
         while shouldMerge:
             try:
                 nextClip = Clip(timeLogs[i+mergeAttempts])
@@ -73,14 +76,12 @@ def merge_clips(timeLogs, video):
                     clip,
                     nextClip,
                 )
-                if shouldMerge:
-                    skipTimelogs.append(nextClip.timeLog)
-                    clip.set_new_end(newEnd=nextClip.end+config.cutAfter)
-                    mergeAttempts += 1
-                else:
-                    clips.append(clip)
-                    newTimeLogs.append(clip.timeLog)
-            except IndexError:
+                skipTimelogs.append(nextClip.timeLog)
+                clip.set_new_end(newEnd=nextClip.end+config.cut_after)
+                mergeAttempts += 1
+            except IndexError as e:
                 break
+        clips.append(clip)
+        newTimeLogs.append(clip.timeLog)
 
     return clips

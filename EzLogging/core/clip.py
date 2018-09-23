@@ -1,7 +1,7 @@
 import os
 import subprocess
 from EzLogging.utils import utils
-import EzLogging.core.config
+from EzLogging.core.config import  config
 
 
 class Clip(object):
@@ -11,17 +11,6 @@ class Clip(object):
         self.index = index
         if originalFile:
             self.originalFile = os.path.join(config.video_path, originalFile)
-            originalFileName = originalFile.partition('.')[0]
-            self.name = "{}_clip{}.{}".format(
-                originalFileName,
-                str(index),
-                config.video_format
-            )
-            self.exportPath = os.path.join(
-                config.video_path,
-                "Clips",
-                self.name
-            )
 
         self.set_seconds()
         self.start = self.seconds - config.cut_before
@@ -32,6 +21,26 @@ class Clip(object):
         self.set_range()
         self.set_seconds()
         self.set_length()
+
+    @property
+    def name(self):
+        originalFileName = os.path.basename(self.originalFile.partition('.')[0])
+        name = "{}_clip{}.{}".format(
+            originalFileName,
+            str(self.index).zfill(3),
+            config.video_format
+        )
+        return name
+
+    @property
+    def exportPath(self):
+        exportPath = os.path.join(
+            config.video_path,
+            "Clips",
+            self.name
+        )
+        # exportPath = config.video_path + "/Clips/" + self.name
+        return exportPath
 
     def set_new_start(self, newStart):
         self.start = newStart
@@ -53,7 +62,6 @@ class Clip(object):
         self.length = self.end - self.start
 
     def export(self):
-
         if not os.path.exists(os.path.join(config.video_path, 'Clips')):
             os.mkdir(config.video_path, 'Clips')
 
