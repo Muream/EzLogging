@@ -32,9 +32,8 @@ class SettingsDialog(QtWidgets.QDialog):
         self.videoFormat_layout()
         self.hotkeys_layout()
 
-        self.ffmpeg_path_layout()
         self.trim_settings()
-        self.csgo_layout()
+        # self.csgo_layout()
         self.apply_settings_button()
 
     def video_path_layout(self):
@@ -59,13 +58,9 @@ class SettingsDialog(QtWidgets.QDialog):
         self.videoPathLabel = QtWidgets.QLabel('Recordings Format')
         self.videoFormatLayout.addWidget(self.videoPathLabel)
 
-        self.videoFormatComboBox = QtWidgets.QComboBox()
-        self.videoFormatComboBox.addItem("mp4")
-        self.videoFormatComboBox.addItem("mov")
-        self.videoFormatComboBox.addItem("mkv")
-        self.videoFormatComboBox.addItem("flv")
+        self.videoFormatLineEdit = QtWidgets.QLineEdit("mp4")
 
-        self.videoFormatLayout.addWidget(self.videoFormatComboBox)
+        self.videoFormatLayout.addWidget(self.videoFormatLineEdit)
 
     def hotkeys_layout(self):
         self.hotkeysLayout = QtWidgets.QHBoxLayout()
@@ -86,20 +81,6 @@ class SettingsDialog(QtWidgets.QDialog):
         self.hotkeysLayout.addWidget(self.stopRecordLabel)
         self.stopRecordButton = HotkeyPushButton(str(config.stop_record))
         self.hotkeysLayout.addWidget(self.stopRecordButton)
-
-    def ffmpeg_path_layout(self):
-        self.ffmpegPathLayout = QtWidgets.QHBoxLayout()
-        self.settingsLayout.addLayout(self.ffmpegPathLayout)
-
-        self.ffmpegPathLabel = QtWidgets.QLabel('FFMPEG Location')
-        self.ffmpegPathLayout.addWidget(self.ffmpegPathLabel)
-
-        self.ffmpegPathLineEdit = QtWidgets.QLineEdit()
-        self.ffmpegPathLayout.addWidget(self.ffmpegPathLineEdit)
-
-        self.ffmpegPathBrowseButton = QtWidgets.QPushButton('Browse')
-        self.ffmpegPathBrowseButton.released.connect(self.browse_ffmpeg)
-        self.ffmpegPathLayout.addWidget(self.ffmpegPathBrowseButton)
 
     def trim_settings(self):
         self.trimSettingsLayout = QtWidgets.QHBoxLayout()
@@ -142,40 +123,30 @@ class SettingsDialog(QtWidgets.QDialog):
         directory = self.browseVideosFileDialog.getExistingDirectory()
         self.videoPathLineEdit.setText(directory)
 
-    def browse_ffmpeg(self):
-        self.browseFfmpegFileDialog = QtWidgets.QFileDialog()
-        self.browseFfmpegFileDialog.setModal(True)
-        self.browseFfmpegFileDialog.setFileMode(QtWidgets.QFileDialog.ExistingFile)
-        self.browseFfmpegFileDialog.setFilter("Executable (*.exe)")
-        self.browseFfmpegFileDialog.exec_()
-        filename = self.browseFfmpegFileDialog.selectedFiles()[0]
-        self.ffmpegPathLineEdit.setText(filename)
 
-    def browse_csgo_demos(self):
-        self.browseVideosFileDialog = QtWidgets.QFileDialog()
-        self.browseVideosFileDialog.setModal(True)
-        directory = self.browseVideosFileDialog.getExistingDirectory()
-        self.csgo_demos_path_line_edit.setText(directory)
+    # def browse_csgo_demos(self):
+    #     self.browseVideosFileDialog = QtWidgets.QFileDialog()
+    #     self.browseVideosFileDialog.setModal(True)
+    #     directory = self.browseVideosFileDialog.getExistingDirectory()
+    #     self.csgo_demos_path_line_edit.setText(directory)
 
     def fill_settings_ui(self):
         self.videoPathLineEdit.setText(str(config.video_path))
-        index = self.videoFormatComboBox.findText(str(config.video_format))
-        self.videoFormatComboBox.setCurrentIndex(index)
+        self.videoFormatLineEdit.setText(str(config.video_format))
 
         self.startRecordButton.setText(str(config.start_record))
         self.stopRecordButton.setText(str(config.stop_record))
         self.logTimeButton.setText(str(config.log_time))
 
-        self.ffmpegPathLineEdit.setText(str(config.ffmpeg_path))
 
         cut_before = config.cut_before if config.cut_before else 0
         cut_after = config.cut_after if config.cut_after else 0
         self.trimBeforeSpinBox.setValue(float(cut_before))
         self.trimAfterSpinBox.setValue(float(cut_after))
 
-        self.csgo_manage_demos_checkbox.setChecked(bool(config.csgo_manage_demos))
-        self.csgo_demos_path_line_edit.setText(str(config.csgo_demos_path))
-        self.csgo_copy_demos_checkbox.setChecked(bool(config.csgo_copy_demos))
+        # self.csgo_manage_demos_checkbox.setChecked(bool(config.csgo_manage_demos))
+        # self.csgo_demos_path_line_edit.setText(str(config.csgo_demos_path))
+        # self.csgo_copy_demos_checkbox.setChecked(bool(config.csgo_copy_demos))
 
     def apply_settings(self):
         self.startRecordHotkey = self.startRecordButton.hotkey
@@ -183,16 +154,15 @@ class SettingsDialog(QtWidgets.QDialog):
         self.logTimeHotkey = self.logTimeButton.hotkey
 
         config.video_path  =  self.videoPathLineEdit.text()
-        config.video_format = self.videoFormatComboBox.currentText()
-        config.ffmpeg_path = self.ffmpegPathLineEdit.text()
+        config.video_format = self.videoFormatLineEdit.text()
         config.cut_before = self.trimBeforeSpinBox.value()
         config.cut_after = self.trimAfterSpinBox.value()
         config.start_record = self.startRecordHotkey
         config.stop_record = self.stopRecordHotkey
         config.log_time = self.logTimeHotkey
-        config.csgo_manage_demos = self.csgo_manage_demos_checkbox.isChecked()
-        config.csgo_demos_path = self.csgo_demos_path_line_edit.text()
-        config.csgo_copy_demos = self.csgo_copy_demos_checkbox.isChecked()
+        # config.csgo_manage_demos = self.csgo_manage_demos_checkbox.isChecked()
+        # config.csgo_demos_path = self.csgo_demos_path_line_edit.text()
+        # config.csgo_copy_demos = self.csgo_copy_demos_checkbox.isChecked()
 
     def apply_and_close(self):
         self.apply_settings()
@@ -201,34 +171,34 @@ class SettingsDialog(QtWidgets.QDialog):
     def close_dialog(self):
         self.close()
 
-    def csgo_layout(self):
-        self.csgo_layout = QtWidgets.QVBoxLayout()
-        self.settingsLayout.addLayout(self.csgo_layout)
+    # def csgo_layout(self):
+    #     self.csgo_layout = QtWidgets.QVBoxLayout()
+    #     self.settingsLayout.addLayout(self.csgo_layout)
 
-        csgo_manage_demos_layout = QtWidgets.QHBoxLayout()
-        self.csgo_layout.addLayout(csgo_manage_demos_layout)
+    #     csgo_manage_demos_layout = QtWidgets.QHBoxLayout()
+    #     self.csgo_layout.addLayout(csgo_manage_demos_layout)
 
-        csgo_manage_demos_label = QtWidgets.QLabel('Manage CS:GO demos')
-        self.csgo_manage_demos_checkbox = QtWidgets.QCheckBox()
-        csgo_manage_demos_layout.addWidget(csgo_manage_demos_label)
-        csgo_manage_demos_layout.addWidget(self.csgo_manage_demos_checkbox)
+    #     csgo_manage_demos_label = QtWidgets.QLabel('Manage CS:GO demos')
+    #     self.csgo_manage_demos_checkbox = QtWidgets.QCheckBox()
+    #     csgo_manage_demos_layout.addWidget(csgo_manage_demos_label)
+    #     csgo_manage_demos_layout.addWidget(self.csgo_manage_demos_checkbox)
 
-        csgo_demos_path_layout = QtWidgets.QHBoxLayout()
-        self.csgo_layout.addLayout(csgo_demos_path_layout)
+    #     csgo_demos_path_layout = QtWidgets.QHBoxLayout()
+    #     self.csgo_layout.addLayout(csgo_demos_path_layout)
 
-        csgo_demos_path_label = QtWidgets.QLabel('CS:GO demos path')
-        csgo_demos_path_layout.addWidget(csgo_demos_path_label)
+    #     csgo_demos_path_label = QtWidgets.QLabel('CS:GO demos path')
+    #     csgo_demos_path_layout.addWidget(csgo_demos_path_label)
 
-        self.csgo_demos_path_line_edit = QtWidgets.QLineEdit()
-        csgo_demos_path_layout.addWidget(self.csgo_demos_path_line_edit)
+    #     self.csgo_demos_path_line_edit = QtWidgets.QLineEdit()
+    #     csgo_demos_path_layout.addWidget(self.csgo_demos_path_line_edit)
 
-        csgo_demos_path_browse_button = QtWidgets.QPushButton('Browse')
-        csgo_demos_path_browse_button.released.connect(self.browse_csgo_demos)
-        csgo_demos_path_layout.addWidget(csgo_demos_path_browse_button)
+    #     csgo_demos_path_browse_button = QtWidgets.QPushButton('Browse')
+    #     csgo_demos_path_browse_button.released.connect(self.browse_csgo_demos)
+    #     csgo_demos_path_layout.addWidget(csgo_demos_path_browse_button)
 
-        csgo_copy_demos_layout = QtWidgets.QHBoxLayout()
-        self.csgo_layout.addLayout(csgo_copy_demos_layout)
-        csgo_copy_demos_label = QtWidgets.QLabel('Copy the demos next the videos')
-        self.csgo_copy_demos_checkbox = QtWidgets.QCheckBox()
-        csgo_copy_demos_layout.addWidget(csgo_copy_demos_label)
-        csgo_copy_demos_layout.addWidget(self.csgo_copy_demos_checkbox)
+    #     csgo_copy_demos_layout = QtWidgets.QHBoxLayout()
+    #     self.csgo_layout.addLayout(csgo_copy_demos_layout)
+    #     csgo_copy_demos_label = QtWidgets.QLabel('Copy the demos next the videos')
+    #     self.csgo_copy_demos_checkbox = QtWidgets.QCheckBox()
+    #     csgo_copy_demos_layout.addWidget(csgo_copy_demos_label)
+    #     csgo_copy_demos_layout.addWidget(self.csgo_copy_demos_checkbox)
