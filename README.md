@@ -8,6 +8,7 @@ EzLogging also merges intelligently clips that overlap into one bigger clip.
 * Clone or download the repo.
 * Run `pip install -r requirements.txt` from the terminal in the root directory.
 * Run `python main.py` to start EzLogging or double clic the file if you've set it to be executed with python by default.
+  * You can run main.pyw to avoid having a console being opened with EzLogging.
 
 # Setup
 * On the first launch, the settings window will open, if not, open it from File > Settings.  
