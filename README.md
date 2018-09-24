@@ -10,9 +10,8 @@ EzLogging also merges intelligently clips that overlap into one bigger clip.
 * Run `python main.py` to start EzLogging or double clic the file if you've set it to be executed with python by default.
 
 # Setup
-On the first launch, the settings window will open, if not, open it from File > Settings.  
-You need to fill everything except the CS:GO stuff.  
-ffmpeg **NEEDS** to be in your PATH.
+* On the first launch, the settings window will open, if not, open it from File > Settings.  
+* ffmpeg **NEEDS** to be in your PATH.
 
 ## Brief explanation of the settings
 
