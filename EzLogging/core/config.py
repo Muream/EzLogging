@@ -3,7 +3,8 @@ import os
 
 import EzLogging.utils.utils as utils
 
-class Config(object):
+
+class Config:
     """Configuration class.
 
     To use it do:
