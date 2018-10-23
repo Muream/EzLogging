@@ -4,7 +4,7 @@ from EzLogging.utils import utils
 from EzLogging.core.config import  config
 
 
-class Clip(object):
+class Clip:
 
     def __init__(self, timeLog, originalFile=None, index=None):
         self.timeLog = timeLog
