@@ -1,5 +1,6 @@
 import sys
 import PySide2.QtWidgets as QtWidgets
+import PySide2.QtCore as QtCore
 # import keyboard
 from pynput import keyboard
 import threading
@@ -21,9 +22,12 @@ class EzLoggingUI(QtWidgets.QMainWindow):
 
         self.setup_ui()
         self.time_logger = TimeLogger(ui=self)
+        if config.windowGeometry:
+            self.setGeometry(*config.windowGeometry)
 
-    # def closeEvent(self, *args, **kwargs):
-    #     self.listener.stop()
+    def closeEvent(self, *args, **kwargs):
+        print(self.frameGeometry())
+        config.windowGeometry = [self.geometry().x(), self.geometry().y(), self.geometry().width(), self.geometry().height()]
 
     def setup_ui(self):
         self.setWindowTitle("EzLogging")
