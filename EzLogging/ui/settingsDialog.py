@@ -1,3 +1,4 @@
+import os
 from PySide2 import QtWidgets
 from EzLogging.ui.hotkeyPushButton import HotkeyPushButton
 from EzLogging.core.config import config
@@ -23,6 +24,10 @@ class SettingsDialog(QtWidgets.QDialog):
 
         self.settings_layout()
         self.fill_settings_ui()
+
+        styleFile = os.path.join(os.path.dirname(__file__), "stylesheet.qss")
+        with open(styleFile, "r") as f:
+            self.setStyleSheet(f.read())
 
     def settings_layout(self):
         self.settingsLayout = QtWidgets.QVBoxLayout()

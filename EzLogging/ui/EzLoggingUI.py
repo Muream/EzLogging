@@ -1,7 +1,7 @@
 import sys
+import os
 import PySide2.QtWidgets as QtWidgets
 import PySide2.QtCore as QtCore
-# import keyboard
 from pynput import keyboard
 import threading
 
@@ -24,6 +24,10 @@ class EzLoggingUI(QtWidgets.QMainWindow):
         self.time_logger = TimeLogger(ui=self)
         if config.windowGeometry:
             self.setGeometry(*config.windowGeometry)
+
+        styleFile = os.path.join(os.path.dirname(__file__), "stylesheet.qss")
+        with open(styleFile, "r") as f:
+            self.setStyleSheet(f.read())
 
     def closeEvent(self, *args, **kwargs):
         print(self.frameGeometry())
