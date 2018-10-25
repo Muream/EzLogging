@@ -2,6 +2,7 @@ import os
 import subprocess
 from EzLogging.utils import utils
 from EzLogging.core.config import  config
+import ffmpy
 
 
 class Clip:
@@ -70,15 +71,7 @@ class Clip:
             "-ss", str(self.start),
             "-t", str(self.length),
             "-i", self.originalFile,
-            "-map", "0:0",
-            "-map", "0:1",
-            "-metadata:s:a:0", "title=Mic",
-            "-map", "0:2",
-            "-metadata:s:a:1", "title=VOIP",
-            "-map", "0:3",
-            "-metadata:s:a:2", "title=Computer",
-            "-map", "0:4",
-            "-metadata:s:a:3", "title=All",
+            "-map", "0",
             "-vcodec", "copy",
             "-acodec", "copy",
             "-avoid_negative_ts", "1",
@@ -93,4 +86,3 @@ class Clip:
         )
         # output = p.communicate('S/nL/n')[0]
         output, error = p.communicate()
-        print("{}'s length should be {}".format(self.name, self.length))
