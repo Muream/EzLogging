@@ -1,6 +1,7 @@
 import sys
 import os
 import PySide2.QtWidgets as QtWidgets
+import PySide2.QtGui as QtGui
 import PySide2.QtCore as QtCore
 from pynput import keyboard
 import threading
@@ -35,6 +36,7 @@ class EzLoggingUI(QtWidgets.QMainWindow):
 
     def setup_ui(self):
         self.setWindowTitle("EzLogging")
+        self.setWindowIcon(QtGui.QIcon("EzLogging/ui/icon.png"))
         self.setMinimumSize(500, 500)
 
         self.create_menus()
