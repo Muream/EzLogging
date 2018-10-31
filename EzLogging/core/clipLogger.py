@@ -36,6 +36,7 @@ def clipLogger(ui):
         export_clips(ui, video, textFile)
 
         utils.move_file(video, 'Processed')
+        utils.move_file(textFile, 'Processed')
         ui.logOutput.append("Done!")
 
 
