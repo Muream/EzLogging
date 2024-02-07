@@ -1,8 +1,8 @@
 import sys
 import os
-import PySide2.QtWidgets as QtWidgets
-import PySide2.QtGui as QtGui
-import PySide2.QtCore as QtCore
+import PySide6.QtWidgets as QtWidgets
+import PySide6.QtGui as QtGui
+import PySide6.QtCore as QtCore
 from pynput import keyboard
 import threading
 
@@ -61,12 +61,12 @@ class EzLoggingUI(QtWidgets.QMainWindow):
         self.create_cliplogger_menu_actions()
 
     def create_settings_menu_actions(self):
-        self.settingsAction = QtWidgets.QAction('&Settings', self)
+        self.settingsAction = QtGui.QAction('&Settings', self)
         self.settingsAction.triggered.connect(self.launch_settings_dialog)
         self.fileMenu.addAction(self.settingsAction)
 
     def create_cliplogger_menu_actions(self):
-        self.clipLoggerAction = QtWidgets.QAction('&Log Clips', self)
+        self.clipLoggerAction = QtGui.QAction('&Log Clips', self)
         self.clipLoggerAction.triggered.connect(self.start_cliplogger)
         self.fileMenu.addAction(self.clipLoggerAction)
 

@@ -1,5 +1,5 @@
 import os
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets
 from EzLogging.ui.hotkeyPushButton import HotkeyPushButton
 from EzLogging.core.config import config
 
